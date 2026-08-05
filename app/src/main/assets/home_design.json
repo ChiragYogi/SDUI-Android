@@ -356,11 +356,13 @@
           }
         },
         "props": {
+          "variant": "split",
           "eyebrow": "BUY USED CAR",
           "title": "High demand for the car you viewed · 2016 Creta",
           "subtitle": "Inspected · Certified · Best Price",
-          "imageUrl": "file:///android_asset/images/car_creta.png",
+          "imageUrl": "https://images.pexels.com/photos/28673504/pexels-photo-28673504.jpeg",
           "priceBadge": "₹ 5.21 Lakh",
+          "priceAlign": "center",
           "tags": [
             "72,971 km",
             "Petrol",
@@ -430,6 +432,7 @@
                 "imageUrl": "@{item.imageUrl}",
                 "bg": "surface.buyTile",
                 "titleColor": "text.onBrand",
+                "titleSize": 18,
                 "width": 160,
                 "height": 120
               },
@@ -516,6 +519,7 @@
                 "imageUrl": "@{item.imageUrl}",
                 "bg": "surface.sellTile",
                 "titleColor": "text.onBrand",
+                "titleSize": 18,
                 "width": 160,
                 "height": 120
               },
