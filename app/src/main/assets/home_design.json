@@ -860,7 +860,7 @@
             "items": [
               {
                 "id": "car_creta",
-                "imageUrl": "file:///android_asset/images/car_creta.png",
+                "imageUrl": "https://images.pexels.com/photos/25637367/pexels-photo-25637367.jpeg",
                 "assuredLabel": "Cars24 Owned stock",
                 "name": "2016 Hyundai Creta",
                 "variant": "SX PLUS 1.6 PETROL",
@@ -883,7 +883,7 @@
               },
               {
                 "id": "car_baleno",
-                "imageUrl": "file:///android_asset/images/car_baleno.png",
+                "imageUrl": "https://images.pexels.com/photos/26834313/pexels-photo-26834313.jpeg",
                 "assuredLabel": "Cars24 Owned stock",
                 "name": "2021 Maruti Baleno",
                 "variant": "ZETA PETROL 1.2",
@@ -977,7 +977,7 @@
             "items": [
               {
                 "id": "car_swift",
-                "imageUrl": "file:///android_asset/images/car_swift.png",
+                "imageUrl": "https://images.pexels.com/photos/34712982/pexels-photo-34712982.jpeg",
                 "assuredLabel": "Cars24 Owned stock",
                 "name": "2019 Maruti Swift",
                 "variant": "VXI 1.2",

@@ -28,7 +28,9 @@ The schema is the product. The renderer must work for screens that do not exist 
   `kotlin-serialization` plugin is applied at root and per-module.
 - Coil 3 (`coil-compose` + `coil-network-okhttp`) for remote images.
 - Screen configs are JSON in `app/src/main/assets`, parsed with
-  `kotlinx.serialization`. There is no network layer.
+  `kotlinx.serialization`. No network call ever fetches or refreshes the config
+  itself. Individual `imageUrl` values may still point at a remote host (Coil
+  fetches those); `INTERNET` permission is declared for that reason only.
 - **No DI framework.** No Hilt, no Koin. Plain constructors and factories.
 - No new dependencies without asking. No Accompanist. No Gson/Moshi.
 
