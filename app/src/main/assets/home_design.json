@@ -1,0 +1,1199 @@
+{
+  "schemaVersion": 1,
+  "screenId": "home",
+  "initialState": {
+    "topTab": "all",
+    "carsFilter": "recent",
+    "emiTenure": "60"
+  },
+  "sheets": {
+    "emi_breakup": {
+      "id": "sheet_emi",
+      "type": "column",
+      "style": {
+        "padding": {
+          "start": 20,
+          "top": 20,
+          "end": 20,
+          "bottom": 32
+        }
+      },
+      "children": [
+        {
+          "id": "emi_t",
+          "type": "text",
+          "props": {
+            "text": "EMI breakup",
+            "variant": "title"
+          }
+        },
+        {
+          "id": "emi_tenure",
+          "type": "chip_row",
+          "props": {
+            "stateKey": "emiTenure",
+            "variant": "pill",
+            "chips": [
+              {
+                "id": "12",
+                "label": "12 mo"
+              },
+              {
+                "id": "24",
+                "label": "24 mo"
+              },
+              {
+                "id": "36",
+                "label": "36 mo"
+              },
+              {
+                "id": "48",
+                "label": "48 mo"
+              },
+              {
+                "id": "60",
+                "label": "60 mo"
+              }
+            ],
+            "width": "fill"
+          },
+          "actions": {
+            "onSelect": {
+              "type": "set_state",
+              "payload": {
+                "key": "emiTenure",
+                "value": "@{chip.id}"
+              }
+            }
+          }
+        },
+        {
+          "id": "emi_amt_12",
+          "type": "column",
+          "visibleWhen": {
+            "state": "emiTenure",
+            "equals": "12"
+          },
+          "children": [
+            {
+              "id": "emi_c_12",
+              "type": "text",
+              "props": {
+                "text": "₹37,220 / month",
+                "variant": "heading"
+              }
+            },
+            {
+              "id": "emi_s_12",
+              "type": "text",
+              "props": {
+                "text": "Down payment ₹1,04,200 · 12 months · 12.5% p.a.",
+                "variant": "caption"
+              }
+            }
+          ]
+        },
+        {
+          "id": "emi_amt_24",
+          "type": "column",
+          "visibleWhen": {
+            "state": "emiTenure",
+            "equals": "24"
+          },
+          "children": [
+            {
+              "id": "emi_c_24",
+              "type": "text",
+              "props": {
+                "text": "₹19,540 / month",
+                "variant": "heading"
+              }
+            },
+            {
+              "id": "emi_s_24",
+              "type": "text",
+              "props": {
+                "text": "Down payment ₹1,04,200 · 24 months · 12.5% p.a.",
+                "variant": "caption"
+              }
+            }
+          ]
+        },
+        {
+          "id": "emi_amt_36",
+          "type": "column",
+          "visibleWhen": {
+            "state": "emiTenure",
+            "equals": "36"
+          },
+          "children": [
+            {
+              "id": "emi_c_36",
+              "type": "text",
+              "props": {
+                "text": "₹13,780 / month",
+                "variant": "heading"
+              }
+            },
+            {
+              "id": "emi_s_36",
+              "type": "text",
+              "props": {
+                "text": "Down payment ₹1,04,200 · 36 months · 12.5% p.a.",
+                "variant": "caption"
+              }
+            }
+          ]
+        },
+        {
+          "id": "emi_amt_48",
+          "type": "column",
+          "visibleWhen": {
+            "state": "emiTenure",
+            "equals": "48"
+          },
+          "children": [
+            {
+              "id": "emi_c_48",
+              "type": "text",
+              "props": {
+                "text": "₹12,150 / month",
+                "variant": "heading"
+              }
+            },
+            {
+              "id": "emi_s_48",
+              "type": "text",
+              "props": {
+                "text": "Down payment ₹1,04,200 · 48 months · 12.5% p.a.",
+                "variant": "caption"
+              }
+            }
+          ]
+        },
+        {
+          "id": "emi_amt_60",
+          "type": "column",
+          "visibleWhen": {
+            "state": "emiTenure",
+            "equals": "60"
+          },
+          "children": [
+            {
+              "id": "emi_c_60",
+              "type": "text",
+              "props": {
+                "text": "₹11,598 / month",
+                "variant": "heading"
+              }
+            },
+            {
+              "id": "emi_s_60",
+              "type": "text",
+              "props": {
+                "text": "Down payment ₹1,04,200 · 60 months · 12.5% p.a.",
+                "variant": "caption"
+              }
+            }
+          ]
+        },
+        {
+          "id": "emi_d",
+          "type": "text",
+          "props": {
+            "text": "*Indicative. Final EMI depends on lender approval.",
+            "variant": "caption"
+          }
+        },
+        {
+          "id": "emi_cta",
+          "type": "button",
+          "props": {
+            "label": "Got it",
+            "variant": "primary"
+          },
+          "actions": {
+            "onClick": {
+              "type": "sequence",
+              "actions": [
+                {
+                  "type": "track",
+                  "payload": {
+                    "event": "emi_sheet_dismiss"
+                  }
+                },
+                {
+                  "type": "dismiss",
+                  "payload": {}
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "root": {
+    "id": "root",
+    "type": "column",
+    "children": [
+      {
+        "id": "header",
+        "type": "header",
+        "style": {
+          "bg": "surface.brand",
+          "padding": {
+            "start": 16,
+            "top": 12,
+            "end": 16,
+            "bottom": 8
+          }
+        },
+        "props": {
+          "location": "Ahmedabad",
+          "avatarInitials": "CG",
+          "searchHint": "Search Baleno"
+        },
+        "actions": {
+          "onLocationClick": {
+            "type": "navigate",
+            "payload": {
+              "route": "city_picker"
+            }
+          },
+          "onSearchClick": {
+            "type": "navigate",
+            "payload": {
+              "route": "search"
+            }
+          },
+          "onAvatarClick": {
+            "type": "navigate",
+            "payload": {
+              "route": "profile"
+            }
+          }
+        }
+      },
+      {
+        "id": "top_tabs",
+        "type": "chip_row",
+        "style": {
+          "bg": "surface.brand",
+          "padding": {
+            "start": 8,
+            "top": 4,
+            "end": 8,
+            "bottom": 12
+          }
+        },
+        "props": {
+          "stateKey": "topTab",
+          "variant": "icon_circle",
+          "chips": [
+            {
+              "id": "all",
+              "label": "All",
+              "imageUrl": "file:///android_asset/images/ic_all.png"
+            },
+            {
+              "id": "buy",
+              "label": "Buy used car",
+              "imageUrl": "file:///android_asset/images/ic_buy.png"
+            },
+            {
+              "id": "sell",
+              "label": "Sell car",
+              "imageUrl": "file:///android_asset/images/ic_sell.png"
+            },
+            {
+              "id": "loan",
+              "label": "Loans",
+              "imageUrl": "file:///android_asset/images/ic_loan.png"
+            }
+          ],
+          "width": "fill"
+        },
+        "actions": {
+          "onSelect": {
+            "type": "sequence",
+            "actions": [
+              {
+                "type": "set_state",
+                "payload": {
+                  "key": "topTab",
+                  "value": "@{chip.id}"
+                }
+              },
+              {
+                "type": "track",
+                "payload": {
+                  "event": "top_tab_select",
+                  "id": "@{chip.id}"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "hero_recent",
+        "type": "hero_card",
+        "visibleWhen": {
+          "state": "topTab",
+          "in": [
+            "all",
+            "buy"
+          ]
+        },
+        "style": {
+          "bg": "surface.brand",
+          "padding": {
+            "start": 16,
+            "top": 0,
+            "end": 16,
+            "bottom": 20
+          }
+        },
+        "props": {
+          "eyebrow": "BUY USED CAR",
+          "title": "High demand for the car you viewed · 2016 Creta",
+          "subtitle": "Inspected · Certified · Best Price",
+          "imageUrl": "file:///android_asset/images/car_creta.png",
+          "priceBadge": "₹ 5.21 Lakh",
+          "tags": [
+            "72,971 km",
+            "Petrol",
+            "Manual"
+          ],
+          "cta": {
+            "label": "Book FREE test drive",
+            "style": "arrow"
+          }
+        },
+        "actions": {
+          "onCtaClick": {
+            "type": "navigate",
+            "payload": {
+              "route": "test_drive",
+              "params": {
+                "carId": "creta2016"
+              }
+            }
+          }
+        }
+      },
+      {
+        "id": "sec_buy",
+        "type": "section",
+        "visibleWhen": {
+          "state": "topTab",
+          "in": [
+            "all",
+            "buy"
+          ]
+        },
+        "style": {
+          "bg": "surface.default",
+          "padding": {
+            "start": 0,
+            "top": 20,
+            "end": 0,
+            "bottom": 4
+          }
+        },
+        "props": {
+          "title": "Buy car",
+          "badge": {
+            "text": "Up to ₹80,000 off",
+            "bg": "#E5271B",
+            "textColor": "#FFFFFF"
+          }
+        },
+        "children": [
+          {
+            "id": "buy_rail",
+            "type": "lazy_row",
+            "style": {
+              "padding": {
+                "start": 20,
+                "top": 12,
+                "end": 20,
+                "bottom": 0
+              },
+              "itemSpacing": 12
+            },
+            "template": {
+              "type": "image_tile",
+              "props": {
+                "title": "@{item.title}",
+                "imageUrl": "@{item.imageUrl}",
+                "bg": "surface.buyTile",
+                "titleColor": "text.onBrand",
+                "width": 160,
+                "height": 120
+              },
+              "actions": {
+                "onClick": {
+                  "type": "navigate",
+                  "payload": {
+                    "route": "listing",
+                    "params": {
+                      "type": "@{item.filterType}"
+                    }
+                  }
+                }
+              }
+            },
+            "items": [
+              {
+                "id": "t_all",
+                "title": "All used cars",
+                "imageUrl": "file:///android_asset/images/tile_all.png",
+                "filterType": "all"
+              },
+              {
+                "id": "t_budget",
+                "title": "Budget used cars",
+                "imageUrl": "file:///android_asset/images/tile_budget.png",
+                "filterType": "budget"
+              },
+              {
+                "id": "t_premium",
+                "title": "Premium used cars",
+                "imageUrl": "file:///android_asset/images/tile_premium.png",
+                "filterType": "premium"
+              },
+              {
+                "id": "t_new",
+                "title": "New cars",
+                "imageUrl": "file:///android_asset/images/tile_new.png",
+                "filterType": "new"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sec_sell",
+        "type": "section",
+        "visibleWhen": {
+          "state": "topTab",
+          "in": [
+            "all",
+            "sell"
+          ]
+        },
+        "style": {
+          "bg": "surface.default",
+          "padding": {
+            "start": 0,
+            "top": 20,
+            "end": 0,
+            "bottom": 4
+          }
+        },
+        "props": {
+          "title": "Sell your car"
+        },
+        "children": [
+          {
+            "id": "sell_rail",
+            "type": "lazy_row",
+            "style": {
+              "padding": {
+                "start": 20,
+                "top": 12,
+                "end": 20,
+                "bottom": 0
+              },
+              "itemSpacing": 12
+            },
+            "template": {
+              "type": "image_tile",
+              "props": {
+                "title": "@{item.title}",
+                "imageUrl": "@{item.imageUrl}",
+                "bg": "surface.sellTile",
+                "titleColor": "text.onBrand",
+                "width": 160,
+                "height": 120
+              },
+              "actions": {
+                "onClick": {
+                  "type": "navigate",
+                  "payload": {
+                    "route": "@{item.route}"
+                  }
+                }
+              }
+            },
+            "items": [
+              {
+                "id": "s_sell",
+                "title": "Sell your car",
+                "imageUrl": "file:///android_asset/images/tile_sell.png",
+                "route": "sell_flow"
+              },
+              {
+                "id": "s_valuation",
+                "title": "Check car valuation",
+                "imageUrl": "file:///android_asset/images/tile_valuation.png",
+                "route": "valuation"
+              },
+              {
+                "id": "s_scrap",
+                "title": "Scrap your car",
+                "imageUrl": "file:///android_asset/images/tile_scrap.png",
+                "route": "scrap"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sec_loans",
+        "type": "section",
+        "visibleWhen": {
+          "state": "topTab",
+          "notIn": [
+            "buy",
+            "sell"
+          ]
+        },
+        "style": {
+          "bg": "surface.default",
+          "padding": {
+            "start": 0,
+            "top": 20,
+            "end": 0,
+            "bottom": 4
+          }
+        },
+        "props": {
+          "title": "Get loans"
+        },
+        "children": [
+          {
+            "id": "loan_rail",
+            "type": "lazy_row",
+            "style": {
+              "padding": {
+                "start": 20,
+                "top": 12,
+                "end": 20,
+                "bottom": 0
+              },
+              "itemSpacing": 16
+            },
+            "template": {
+              "type": "image_tile",
+              "props": {
+                "title": "@{item.title}",
+                "imageUrl": "@{item.imageUrl}",
+                "titleColor": "text.primary",
+                "titleBelow": true,
+                "width": 120,
+                "height": 96
+              },
+              "actions": {
+                "onClick": {
+                  "type": "navigate",
+                  "payload": {
+                    "route": "loan",
+                    "params": {
+                      "type": "@{item.loanType}"
+                    }
+                  }
+                }
+              }
+            },
+            "items": [
+              {
+                "id": "l_used",
+                "title": "Used car loan",
+                "imageUrl": "file:///android_asset/images/loan_used.png",
+                "loanType": "used"
+              },
+              {
+                "id": "l_against",
+                "title": "Loan against car",
+                "imageUrl": "file:///android_asset/images/loan_against.png",
+                "loanType": "against"
+              },
+              {
+                "id": "l_personal",
+                "title": "Personal loan",
+                "imageUrl": "file:///android_asset/images/loan_personal.png",
+                "loanType": "personal"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sec_checks",
+        "type": "section",
+        "style": {
+          "bg": "surface.default",
+          "padding": {
+            "start": 0,
+            "top": 24,
+            "end": 0,
+            "bottom": 4
+          }
+        },
+        "props": {
+          "title": "Car check services"
+        },
+        "children": [
+          {
+            "id": "checks_grid",
+            "type": "grid",
+            "style": {
+              "padding": {
+                "start": 20,
+                "top": 12,
+                "end": 20,
+                "bottom": 0
+              },
+              "itemSpacing": 12
+            },
+            "props": {
+              "columns": 3
+            },
+            "template": {
+              "type": "icon_card",
+              "props": {
+                "title": "@{item.title}",
+                "imageUrl": "@{item.imageUrl}",
+                "width": "content"
+              },
+              "actions": {
+                "onClick": {
+                  "type": "navigate",
+                  "payload": {
+                    "route": "service",
+                    "params": {
+                      "id": "@{item.serviceId}"
+                    }
+                  }
+                }
+              }
+            },
+            "items": [
+              {
+                "id": "g_pdi",
+                "title": "New car PDI",
+                "imageUrl": "file:///android_asset/images/ic_pdi.png",
+                "serviceId": "pdi"
+              },
+              {
+                "id": "g_check",
+                "title": "Used car check",
+                "imageUrl": "file:///android_asset/images/ic_check.png",
+                "serviceId": "check"
+              },
+              {
+                "id": "g_history",
+                "title": "Vehicle history",
+                "imageUrl": "file:///android_asset/images/ic_history.png",
+                "serviceId": "history"
+              },
+              {
+                "id": "g_challan",
+                "title": "Check challan",
+                "imageUrl": "file:///android_asset/images/ic_challan.png",
+                "serviceId": "challan"
+              },
+              {
+                "id": "g_ins",
+                "title": "Check car insurance",
+                "imageUrl": "file:///android_asset/images/ic_insurance.png",
+                "serviceId": "insurance"
+              },
+              {
+                "id": "g_odo",
+                "title": "Odometer tampering",
+                "imageUrl": "file:///android_asset/images/ic_odometer.png",
+                "serviceId": "odometer"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sec_love",
+        "type": "section",
+        "style": {
+          "bg": "surface.default",
+          "padding": {
+            "start": 0,
+            "top": 24,
+            "end": 0,
+            "bottom": 4
+          }
+        },
+        "props": {
+          "title": "Used cars you'll love",
+          "trailing": {
+            "label": "View all"
+          }
+        },
+        "actions": {
+          "onTrailingClick": {
+            "type": "navigate",
+            "payload": {
+              "route": "listing",
+              "params": {
+                "source": "love"
+              }
+            }
+          }
+        },
+        "children": [
+          {
+            "id": "love_filter",
+            "type": "chip_row",
+            "style": {
+              "padding": {
+                "start": 20,
+                "top": 12,
+                "end": 20,
+                "bottom": 0
+              },
+              "itemSpacing": 8
+            },
+            "props": {
+              "stateKey": "carsFilter",
+              "variant": "pill",
+              "chips": [
+                {
+                  "id": "recent",
+                  "label": "Recently viewed"
+                },
+                {
+                  "id": "hot",
+                  "label": "Hot deals"
+                }
+              ],
+              "width": "fill"
+            },
+            "actions": {
+              "onSelect": {
+                "type": "set_state",
+                "payload": {
+                  "key": "carsFilter",
+                  "value": "@{chip.id}"
+                }
+              }
+            }
+          },
+          {
+            "id": "love_rail_recent",
+            "type": "lazy_row",
+            "visibleWhen": {
+              "state": "carsFilter",
+              "notEquals": "hot"
+            },
+            "style": {
+              "padding": {
+                "start": 20,
+                "top": 12,
+                "end": 20,
+                "bottom": 0
+              },
+              "itemSpacing": 12
+            },
+            "template": {
+              "type": "car_card",
+              "props": {
+                "imageUrl": "@{item.imageUrl}",
+                "assuredLabel": "@{item.assuredLabel}",
+                "name": "@{item.name}",
+                "variant": "@{item.variant}",
+                "specs": "@{item.specs}",
+                "price": "@{item.price}",
+                "priceValue": "@{item.priceValue}",
+                "emi": "@{item.emi}",
+                "footnote": "@{item.footnote}",
+                "badges": "@{item.badges}",
+                "wishlisted": "@{item.wishlisted}"
+              },
+              "actions": {
+                "onClick": {
+                  "type": "sequence",
+                  "actions": [
+                    {
+                      "type": "track",
+                      "payload": {
+                        "event": "car_click",
+                        "id": "@{item.carId}"
+                      }
+                    },
+                    {
+                      "type": "navigate",
+                      "payload": {
+                        "route": "car_detail",
+                        "params": {
+                          "carId": "@{item.carId}"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "onEmiClick": {
+                  "type": "open_sheet",
+                  "payload": {
+                    "sheetId": "emi_breakup"
+                  }
+                },
+                "onWishlistClick": {
+                  "type": "track",
+                  "payload": {
+                    "event": "wishlist",
+                    "id": "@{item.carId}"
+                  }
+                }
+              }
+            },
+            "items": [
+              {
+                "id": "car_creta",
+                "imageUrl": "file:///android_asset/images/car_creta.png",
+                "assuredLabel": "Cars24 Owned stock",
+                "name": "2016 Hyundai Creta",
+                "variant": "SX PLUS 1.6 PETROL",
+                "specs": [
+                  "72,971 km",
+                  "Petrol",
+                  "Manual",
+                  "GJ01"
+                ],
+                "price": "₹5.21 lakh",
+                "priceValue": 521000,
+                "emi": "EMI ₹11,598/m*",
+                "footnote": "+other charges",
+                "badges": [
+                  "Zero Worry Max",
+                  "Lifetime warranty"
+                ],
+                "wishlisted": false,
+                "carId": "creta2016"
+              },
+              {
+                "id": "car_baleno",
+                "imageUrl": "file:///android_asset/images/car_baleno.png",
+                "assuredLabel": "Cars24 Owned stock",
+                "name": "2021 Maruti Baleno",
+                "variant": "ZETA PETROL 1.2",
+                "specs": [
+                  "20,518 km",
+                  "Petrol",
+                  "Manual",
+                  "GJ05"
+                ],
+                "price": "₹4.76 lakh",
+                "priceValue": 476000,
+                "emi": "EMI ₹10,602/m*",
+                "footnote": "+other charges",
+                "badges": [
+                  "Zero Worry Max",
+                  "Lifetime warranty"
+                ],
+                "wishlisted": false,
+                "carId": "baleno2021"
+              }
+            ]
+          },
+          {
+            "id": "love_rail_hot",
+            "type": "lazy_row",
+            "visibleWhen": {
+              "state": "carsFilter",
+              "equals": "hot"
+            },
+            "style": {
+              "padding": {
+                "start": 20,
+                "top": 12,
+                "end": 20,
+                "bottom": 0
+              },
+              "itemSpacing": 12
+            },
+            "template": {
+              "type": "car_card",
+              "props": {
+                "imageUrl": "@{item.imageUrl}",
+                "assuredLabel": "@{item.assuredLabel}",
+                "name": "@{item.name}",
+                "variant": "@{item.variant}",
+                "specs": "@{item.specs}",
+                "price": "@{item.price}",
+                "priceValue": "@{item.priceValue}",
+                "emi": "@{item.emi}",
+                "footnote": "@{item.footnote}",
+                "badges": "@{item.badges}",
+                "wishlisted": "@{item.wishlisted}"
+              },
+              "actions": {
+                "onClick": {
+                  "type": "sequence",
+                  "actions": [
+                    {
+                      "type": "track",
+                      "payload": {
+                        "event": "car_click",
+                        "id": "@{item.carId}"
+                      }
+                    },
+                    {
+                      "type": "navigate",
+                      "payload": {
+                        "route": "car_detail",
+                        "params": {
+                          "carId": "@{item.carId}"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "onEmiClick": {
+                  "type": "open_sheet",
+                  "payload": {
+                    "sheetId": "emi_breakup"
+                  }
+                },
+                "onWishlistClick": {
+                  "type": "track",
+                  "payload": {
+                    "event": "wishlist",
+                    "id": "@{item.carId}"
+                  }
+                }
+              }
+            },
+            "items": [
+              {
+                "id": "car_swift",
+                "imageUrl": "file:///android_asset/images/car_swift.png",
+                "assuredLabel": "Cars24 Owned stock",
+                "name": "2019 Maruti Swift",
+                "variant": "VXI 1.2",
+                "specs": [
+                  "41,204 km",
+                  "Petrol",
+                  "Manual",
+                  "GJ01"
+                ],
+                "price": "₹4.15 lakh",
+                "priceValue": 415000,
+                "emi": "EMI ₹9,240/m*",
+                "footnote": "+other charges",
+                "badges": [
+                  "Hot deal",
+                  "Lifetime warranty"
+                ],
+                "wishlisted": false,
+                "carId": "swift2019"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "banner_spotify",
+        "type": "image_banner",
+        "style": {
+          "padding": {
+            "start": 16,
+            "top": 24,
+            "end": 16,
+            "bottom": 0
+          }
+        },
+        "props": {
+          "imageUrl": "file:///android_asset/images/banner_spotify.png",
+          "aspectRatio": 2.1,
+          "cornerRadius": 16,
+          "width": "fill"
+        },
+        "actions": {
+          "onClick": {
+            "type": "open_url",
+            "payload": {
+              "url": "https://cars24.com/offers/spotify"
+            }
+          }
+        }
+      },
+      {
+        "id": "sec_trending",
+        "type": "section",
+        "style": {
+          "bg": "surface.default",
+          "padding": {
+            "start": 0,
+            "top": 24,
+            "end": 0,
+            "bottom": 4
+          }
+        },
+        "props": {
+          "title": "Trending new cars",
+          "trailing": {
+            "label": "View all"
+          }
+        },
+        "actions": {
+          "onTrailingClick": {
+            "type": "navigate",
+            "payload": {
+              "route": "new_car_list"
+            }
+          }
+        },
+        "children": [
+          {
+            "id": "trending_rail",
+            "type": "lazy_row",
+            "style": {
+              "padding": {
+                "start": 20,
+                "top": 12,
+                "end": 20,
+                "bottom": 0
+              },
+              "itemSpacing": 12
+            },
+            "template": {
+              "type": "car_card",
+              "props": {
+                "imageUrl": "@{item.imageUrl}",
+                "name": "@{item.name}",
+                "variant": "@{item.variant}",
+                "rankLabel": "@{item.rankLabel}"
+              },
+              "actions": {
+                "onClick": {
+                  "type": "navigate",
+                  "payload": {
+                    "route": "new_car_detail",
+                    "params": {
+                      "model": "@{item.model}"
+                    }
+                  }
+                }
+              }
+            },
+            "items": [
+              {
+                "id": "n_seltos",
+                "imageUrl": "file:///android_asset/images/new_seltos.png",
+                "name": "Seltos",
+                "variant": "Kia",
+                "rankLabel": "1",
+                "model": "seltos"
+              },
+              {
+                "id": "n_sonet",
+                "imageUrl": "file:///android_asset/images/new_sonet.png",
+                "name": "Sonet",
+                "variant": "Kia",
+                "rankLabel": "2",
+                "model": "sonet"
+              },
+              {
+                "id": "n_syros",
+                "imageUrl": "file:///android_asset/images/new_syros.png",
+                "name": "Syros",
+                "variant": "Kia",
+                "rankLabel": "3",
+                "model": "syros"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "banner_return",
+        "type": "image_banner",
+        "style": {
+          "padding": {
+            "start": 16,
+            "top": 24,
+            "end": 16,
+            "bottom": 0
+          }
+        },
+        "props": {
+          "imageUrl": "file:///android_asset/images/banner_return.png",
+          "aspectRatio": 2.1,
+          "cornerRadius": 16,
+          "width": "fill"
+        },
+        "actions": {
+          "onClick": {
+            "type": "navigate",
+            "payload": {
+              "route": "return_policy"
+            }
+          }
+        }
+      },
+      {
+        "id": "showrooms_teaser",
+        "type": "showroom_rail",
+        "minSchemaVersion": 2,
+        "props": {
+          "title": "2 showrooms in your city"
+        },
+        "fallback": {
+          "id": "showrooms_fb",
+          "type": "image_banner",
+          "style": {
+            "padding": {
+              "start": 16,
+              "top": 24,
+              "end": 16,
+              "bottom": 0
+            }
+          },
+          "props": {
+            "imageUrl": "file:///android_asset/images/banner_showroom.png",
+            "aspectRatio": 2.1,
+            "cornerRadius": 16,
+            "width": "fill"
+          },
+          "actions": {
+            "onClick": {
+              "type": "navigate",
+              "payload": {
+                "route": "showroom_list"
+              }
+            }
+          }
+        }
+      },
+      {
+        "id": "footer",
+        "type": "footer",
+        "style": {
+          "bg": "surface.brand",
+          "padding": {
+            "start": 20,
+            "top": 48,
+            "end": 20,
+            "bottom": 48
+          }
+        },
+        "props": {
+          "headline": "better drives,\nbetter lives",
+          "subtitle": "Made with ❤️ in Gurugram",
+          "textColor": "text.onBrand"
+        }
+      }
+    ]
+  }
+}

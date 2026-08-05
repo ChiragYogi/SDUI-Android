@@ -81,38 +81,56 @@ ui/theme/  colors, typography
 
 ## Conventions
 
-- Asset reading **and** parsing happen in the repository, off the main thread
-  (`Dispatchers.IO` for the read, `Dispatchers.Default` for the parse). The
-  repository holds the `Context`; the ViewModel does not. No `AndroidViewModel`.
-- Parsing happens **once** per screen load. Never in composition, never inside
-  `remember {}`. The ViewModel holds the parsed tree in `StateFlow` so it
-  survives configuration change.
-- `Context` reaches the repository via the ViewModel factory at the call site,
-  using `applicationContext`. Never store an Activity `Context`.
+- Asset read + parse happen in the repository, off main (`IO` for read,
+  `Default` for parse). Repository holds `Context`; ViewModel does not.
+  No `AndroidViewModel`. Parse once per load, never in composition or `remember{}`.
+- `Context` reaches the repository via the ViewModel factory, `applicationContext`
+  only. Never an Activity `Context`.
 - Component composables take exactly `(node: SduiNode, ctx: RenderContext)`.
-  Nothing else. No extra params, no callbacks passed down.
+  No extra params, no callbacks passed down. Components call `ctx.dispatch(trigger)`.
+- Trigger keys (`onClick`, `onSelect`, `onEmiClick`) live in the node's `actions`
+  map. A component fires a trigger and never knows what it does.
+- Action set is closed: `navigate`, `set_state`, `open_sheet`, `dismiss`,
+  `open_url`, `track`, `sequence`. Adding one is a deliberate schema change.
+- `navigate` payload is `{ route, params, deeplink? }` — a named route, not a URI.
+  `deeplink` is for external/web targets only.
+- Unknown action type or unknown route → log and ignore. Never crash.
 - Adding a component = one file in `catalog/` + one line in `AppRegistry.kt`.
-  If it needs more than that, the design is wrong — tell me, don't work around it.
-- Component type names are `snake_case`, role-based, platform-neutral.
-  `car_card`, `section_rail`, `icon_grid`. Never `CarCardView`, `LazyRowSection`,
-  `LinearLayout`.
-- Layout primitives keep generic names: `column`, `row`, `lazy_row`, `text`,
+  If it needs more, the design is wrong — say so, don't work around it.
+- Type strings live in `object NodeType` inside `catalog/AppRegistry.kt`.
+  Never inline literals, never a shared `Constants.kt`, never in `core/`.
+- Type names are `snake_case`, role-based, platform-neutral: `car_card`,
+  `section_rail`. Never `CarCardView`, `LazyRowSection`, `LinearLayout`.
+- Primitives keep generic names: `column`, `row`, `lazy_row`, `grid`, `text`,
   `image`, `spacer`.
-- Per-component props are typed locally with a `@Serializable data class` inside
-  that component's file. Props classes are never shared or centralised.
-- Component type strings live as constants in `object NodeType` inside
-  `catalog/AppRegistry.kt` — same file as the registry map. Never as inline
-  string literals, never in a shared `Constants.kt`, never in `core/`.
-  Action type constants may live in `core/`; the action set is engine-owned
-  and closed.
-- Server sends display strings (`"₹5.21 lakh"`, `"72,971 km"`), not raw numbers.
-  The client does no currency, unit, or locale formatting.
-- **No domain models.** No `Price`, `Car`, `Emi` value types. The client holds no
-  business logic, so there is nothing for a domain type to model — it would only
-  re-introduce client-side formatting, which is what SDUI exists to remove.
-  Where a client-side behaviour genuinely needs a number (sorting, filtering),
-  the payload carries a parallel raw field (`"price"` + `"priceValue"`), and only
-  when something actually consumes it.
+- Props are typed locally with a `@Serializable data class` in that component's
+  file. Never shared, never centralised.
+- Colors are semantic tokens (`surface.brand`), not hex. Resolution: starts with
+  `#` → literal; else → token lookup; unknown → null → component default.
+- Sizing: fixed dp, `"fill"`, or `"content"`. Nothing else — no weights, no
+  gravity, no alignment specs.
+- Selection/pressed/disabled states are owned by the component, never described
+  in the payload. Payload sends `variant` + `stateKey`; selection comes from state.
+- Server sends display strings (`"₹5.21 lakh"`). Client does no currency, unit,
+  or locale formatting.
+- No domain models. No `Price`, `Car`, `Emi` types. Where a client behaviour needs
+  a number, the payload carries a parallel raw field — and only if consumed.
+- Homogeneous repeats (`lazy_row`/`grid` children) use `template` + `items[]`,
+  never N hand-written sibling nodes. `template` is a node shape with `@{item.x}`
+  placeholders; each entry in `items` supplies the data and its own `id` (used as
+  the rendered node's id — same "never the index" rule applies to generated
+  nodes). A node has either `children` or `template`+`items`, never both.
+- `@{item.path}` substitution: if the prop's value is *exactly* that token,
+  substitute the raw JSON value (array/number/bool preserved, e.g. `specs`,
+  `priceValue`, `wishlisted`). If the token appears inside a longer string, it's
+  plain string interpolation and the result is always a string.
+- `visibleWhen` supports `equals` / `notEquals` / `in` / `notIn` against a single
+  state key. No `and`/`or`, no nested conditions — a boolean expression evaluator
+  is out of scope; a screen that needs one is a documented coverage gap, not a
+  feature to build reactively.
+- `button` is a real primitive (`props.label`, `props.variant`, `actions.onClick`)
+  for a standalone CTA. Don't fake one with `text` + `variant: "cta"` — that was
+  a placeholder, not a pattern.
 
 ## Commit style
 
