@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     //testing libs
     testImplementation(libs.junit)
@@ -61,4 +62,5 @@ dependencies {
     //coli to load the image form network
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+
 }
