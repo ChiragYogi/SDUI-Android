@@ -15,7 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.render.RenderNode
 import com.chiraggoswami.sduidemo.core.render.resolveChildren
@@ -30,8 +32,16 @@ private data class BadgeProps(val text: String = "", val bg: String? = null, val
 private data class TrailingProps(val label: String = "")
 
 @Serializable
+private data class SectionTitleStyle(
+    val color: String? = null,
+    val size: Int = 20,
+    val bold: Boolean = true,
+)
+
+@Serializable
 private data class SectionProps(
     val title: String = "",
+    val titleStyle: SectionTitleStyle = SectionTitleStyle(),
     val badge: BadgeProps? = null,
     val trailing: TrailingProps? = null,
 )
@@ -47,7 +57,12 @@ fun Section(node: SduiNode, ctx: RenderContext) {
             Alignment.CenterVertically,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(props.title, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    props.title,
+                    color = resolveColor(props.titleStyle.color) ?: Color.Unspecified,
+                    fontSize = props.titleStyle.size.sp,
+                    fontWeight = if (props.titleStyle.bold) FontWeight.Bold else FontWeight.Normal,
+                )
                 props.badge?.let { badge ->
                     Text(
                         badge.text,

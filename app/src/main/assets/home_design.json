@@ -406,6 +406,10 @@
         },
         "props": {
           "title": "Buy car",
+          "titleStyle": {
+            "size": 20,
+            "bold": true
+          },
           "badge": {
             "text": "Up to ₹80,000 off",
             "bg": "#E5271B",
@@ -429,10 +433,14 @@
               "type": "image_tile",
               "props": {
                 "title": "@{item.title}",
-                "imageUrl": "@{item.imageUrl}",
-                "bg": "surface.buyTile",
-                "titleColor": "text.onBrand",
-                "titleSize": 18,
+                "imageUrl": "https://placehold.net/8.png",
+                "imageFill": true,
+                "titleStyle": {
+                  "color": "text.onBrand",
+                  "size": 18,
+                  "bold": true,
+                  "position": "top_start"
+                },
                 "width": 160,
                 "height": 120
               },
@@ -452,25 +460,21 @@
               {
                 "id": "t_all",
                 "title": "All used cars",
-                "imageUrl": "file:///android_asset/images/tile_all.png",
                 "filterType": "all"
               },
               {
                 "id": "t_budget",
                 "title": "Budget used cars",
-                "imageUrl": "file:///android_asset/images/tile_budget.png",
                 "filterType": "budget"
               },
               {
                 "id": "t_premium",
                 "title": "Premium used cars",
-                "imageUrl": "file:///android_asset/images/tile_premium.png",
                 "filterType": "premium"
               },
               {
                 "id": "t_new",
                 "title": "New cars",
-                "imageUrl": "file:///android_asset/images/tile_new.png",
                 "filterType": "new"
               }
             ]
@@ -497,7 +501,11 @@
           }
         },
         "props": {
-          "title": "Sell your car"
+          "title": "Sell your car",
+          "titleStyle": {
+            "size": 20,
+            "bold": true
+          }
         },
         "children": [
           {
@@ -516,10 +524,14 @@
               "type": "image_tile",
               "props": {
                 "title": "@{item.title}",
-                "imageUrl": "@{item.imageUrl}",
-                "bg": "surface.sellTile",
-                "titleColor": "text.onBrand",
-                "titleSize": 18,
+                "imageUrl": "https://placehold.net/5.png",
+                "imageFill": true,
+                "titleStyle": {
+                  "color": "text.onBrand",
+                  "size": 18,
+                  "bold": true,
+                  "position": "top_start"
+                },
                 "width": 160,
                 "height": 120
               },
@@ -536,19 +548,16 @@
               {
                 "id": "s_sell",
                 "title": "Sell your car",
-                "imageUrl": "file:///android_asset/images/tile_sell.png",
                 "route": "sell_flow"
               },
               {
                 "id": "s_valuation",
                 "title": "Check car valuation",
-                "imageUrl": "file:///android_asset/images/tile_valuation.png",
                 "route": "valuation"
               },
               {
                 "id": "s_scrap",
                 "title": "Scrap your car",
-                "imageUrl": "file:///android_asset/images/tile_scrap.png",
                 "route": "scrap"
               }
             ]
@@ -575,7 +584,11 @@
           }
         },
         "props": {
-          "title": "Get loans"
+          "title": "Get loans",
+          "titleStyle": {
+            "size": 20,
+            "bold": true
+          }
         },
         "children": [
           {
@@ -594,9 +607,12 @@
               "type": "image_tile",
               "props": {
                 "title": "@{item.title}",
-                "imageUrl": "@{item.imageUrl}",
-                "titleColor": "text.primary",
-                "titleBelow": true,
+                "imageUrl": "https://placehold.net/7.png",
+                "imageFill": true,
+                "titleStyle": {
+                  "color": "text.primary",
+                  "position": "below"
+                },
                 "width": 120,
                 "height": 96
               },
@@ -616,19 +632,16 @@
               {
                 "id": "l_used",
                 "title": "Used car loan",
-                "imageUrl": "file:///android_asset/images/loan_used.png",
                 "loanType": "used"
               },
               {
                 "id": "l_against",
                 "title": "Loan against car",
-                "imageUrl": "file:///android_asset/images/loan_against.png",
                 "loanType": "against"
               },
               {
                 "id": "l_personal",
                 "title": "Personal loan",
-                "imageUrl": "file:///android_asset/images/loan_personal.png",
                 "loanType": "personal"
               }
             ]
@@ -648,7 +661,11 @@
           }
         },
         "props": {
-          "title": "Car check services"
+          "title": "Car check services",
+          "titleStyle": {
+            "size": 20,
+            "bold": true
+          }
         },
         "children": [
           {
@@ -740,6 +757,10 @@
         },
         "props": {
           "title": "Used cars you'll love",
+          "titleStyle": {
+            "size": 20,
+            "bold": true
+          },
           "trailing": {
             "label": "View all"
           }
@@ -1046,6 +1067,10 @@
         },
         "props": {
           "title": "Trending new cars",
+          "titleStyle": {
+            "size": 20,
+            "bold": true
+          },
           "trailing": {
             "label": "View all"
           }
