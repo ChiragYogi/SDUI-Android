@@ -44,7 +44,10 @@ next to this SDUI-rendered build, same sections, same order.
 
 | Cars24 app (reference) | This build (SDUI-rendered) |
 |---|---|
-| ![Cars24 app home screen](screenshots/cars24_reference.jpg) | ![SDUI-rendered build](screenshots/sdui_build.jpg) |
+| <a href="screenshots/cars24_reference.jpg"><img src="screenshots/cars24_reference.jpg" width="250" height="500"></a> | <a href="screenshots/sdui_build.jpg"><img src="screenshots/sdui_build.jpg" width="250" height="500"></a> |
+
+Both are full-page scrolling captures (taller than the crop above shows) —
+click either thumbnail to open the actual image.
 
 ## Setup
 
