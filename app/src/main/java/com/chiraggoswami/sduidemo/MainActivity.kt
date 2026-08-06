@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.chiraggoswami.sduidemo.screen.SduiScreen
+import com.chiraggoswami.sduidemo.static.StaticHomeScreen
 import com.chiraggoswami.sduidemo.ui.theme.SDUIDemoTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,7 +19,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             SDUIDemoTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    SduiScreen(screenId = "home", modifier = Modifier.padding(innerPadding))
+                    // The "static"/"sdui" product flavors (see app/build.gradle.kts) install as
+                    // separate packages so :macrobenchmark can cold-start each independently.
+                    if (BuildConfig.FLAVOR == "static") {
+                        StaticHomeScreen(modifier = Modifier.padding(innerPadding))
+                    } else {
+                        SduiScreen(screenId = "home", modifier = Modifier.padding(innerPadding))
+                    }
                 }
             }
         }
