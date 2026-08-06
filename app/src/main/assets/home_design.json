@@ -975,6 +975,52 @@
                 ],
                 "wishlisted": false,
                 "carId": "baleno2021"
+              },
+              {
+                "id": "car_alto",
+                "imageUrl": "https://images.pexels.com/photos/26834313/pexels-photo-26834313.jpeg",
+                "assuredLabel": "Cars24 Owned stock",
+                "name": "2021 Maruti alto",
+                "variant": "ZETA PETROL 1.2",
+                "specs": [
+                  "10,518 km",
+                  "Petrol",
+                  "Manual",
+                  "GJ05"
+                ],
+                "price": "₹4.76 lakh",
+                "priceValue": 476000,
+                "emi": "EMI ₹10,602/m*",
+                "footnote": "+other charges",
+                "badges": [
+                  "Zero Worry Max",
+                  "Lifetime warranty"
+                ],
+                "wishlisted": false,
+                "carId": "alto2020"
+              },
+              {
+                "id": "car_echo",
+                "imageUrl": "https://images.pexels.com/photos/25637367/pexels-photo-25637367.jpeg",
+                "assuredLabel": "Cars24 Owned stock",
+                "name": "2021 Maruti Echo",
+                "variant": "CNG + PETROl",
+                "specs": [
+                  "50,518 km",
+                  "Petrol",
+                  "Manual",
+                  "GJ05"
+                ],
+                "price": "2.76 lakh",
+                "priceValue": 476000,
+                "emi": "EMI ₹10,602/m*",
+                "footnote": "+other charges",
+                "badges": [
+                  "Zero Worry Max",
+                  "Lifetime warranty"
+                ],
+                "wishlisted": false,
+                "carId": "echo2019"
               }
             ]
           },
