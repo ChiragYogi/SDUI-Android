@@ -15,14 +15,14 @@ code — see `PERF.md`) and the second-screen dry run, which happens live.
 **Note on commit history**: if you're viewing this from an extracted zip
 rather than a clone, the `.git` folder (and with it the full commit history —
 "we read how you worked" per the brief) may not have survived the zip step.
-Clone the actual repo to see it: **`https://github.com/ChiragYogi/SDUI-Android`**.
+Clone the actual repo to see it: **[github.com/ChiragYogi/SDUI-Android](https://github.com/ChiragYogi/SDUI-Android)**.
 
 ## Video
 
 3-5 min screen recording: JSON rendering into the live screen, the EMI tenure
 selector + bottom sheet, the `showroom_rail` unknown-component fallback, and
 one live JSON edit (change `home_design.json`, re-run, page changes with zero
-client code touched). Link: **`<add recording link here>`**.
+client code touched). Link: **[Google Drive](https://drive.google.com/drive/folders/1WWF2Pfft5L2mkUGJQL0NVpFRabTYXxFA?usp=sharing)**.
 
 ## Which screen, and why
 
