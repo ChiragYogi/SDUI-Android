@@ -45,6 +45,9 @@ private data class CarCardProps(
     val wishlisted: Boolean = false,
     val rankLabel: String = "",
     val stateKey: String = "",
+    // Fixed dp (default) for a horizontal rail's intrinsic card width, or "fill" to stretch
+    // to the parent's width — e.g. when the same node sits in a `grid` instead of `lazy_row`.
+    val width: String = "200",
 )
 
 /** Used-car listing card. Same node shape covers the sparse "trending" rail and the full "love" rail. */
@@ -54,9 +57,14 @@ fun CarCard(node: SduiNode, ctx: RenderContext) {
     // `wishlisted` seeds the initial value; once toggled, `stateKey` (unique per card, e.g.
     // "wishlist_creta2016") owns it — same "payload seeds, state owns" split as chip_row.
     val isWishlisted = ctx.state.get(props.stateKey)?.toBoolean() ?: props.wishlisted
+    val widthModifier = if (props.width == "fill") {
+        Modifier.fillMaxWidth()
+    } else {
+        Modifier.width((props.width.toIntOrNull() ?: 200).dp)
+    }
     Card(
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.width(200.dp).clickable { node.actions?.get("onClick")?.let(ctx::dispatch) },
+        modifier = widthModifier.clickable { node.actions?.get("onClick")?.let(ctx::dispatch) },
     ) {
         Column {
             CarCardImage(props, isWishlisted, node, ctx)
