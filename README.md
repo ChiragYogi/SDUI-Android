@@ -11,6 +11,11 @@ pass and the second-screen dry run (see those files, and `notes.md` for the
 running log). This README's own Trade-offs section is provisional for the
 same reason.
 
+**Note on commit history**: if you're viewing this from an extracted zip
+rather than a clone, the `.git` folder (and with it the full commit history —
+"we read how you worked" per the brief) may not have survived the zip step.
+Clone the actual repo to see it: **`https://github.com/ChiragYogi/SDUI-Android`**.
+
 ## Video
 
 3-5 min screen recording: JSON rendering into the live screen, the EMI tenure
@@ -31,6 +36,15 @@ deliberate unknown-component case (`showroom_rail`) with a live fallback,
 not a synthetic one added just to check a box. Real-feeling data throughout
 (actual car specs, EMI figures, badge copy), hardcoded in the JSON per the
 brief.
+
+## Screenshots: reference vs. build
+
+Side by side for a quick visual sanity check — the actual Cars24 home screen
+next to this SDUI-rendered build, same sections, same order.
+
+| Cars24 app (reference) | This build (SDUI-rendered) |
+|---|---|
+| ![Cars24 app home screen](screenshots/cars24_reference.jpg) | ![SDUI-rendered build](screenshots/sdui_build.jpg) |
 
 ## Setup
 
@@ -62,7 +76,15 @@ See `CLAUDE.md` for the full command reference and repo conventions.
 
 ## Architecture overview
 
-`core/` never imports from `catalog/`/`data/`/`static/`/`ui.theme` — it's
+```
+core/      schema, registry, render      — the engine
+catalog/   UI components + registry      — the design system
+data/      ScreenRepository              — payload source
+static/    hardcoded screen              — benchmark twin
+ui/theme/  colors, typography
+```
+
+`core/` never imports from `catalog/`, `data/`, `static/`, or `ui/theme` — it's
 liftable into its own module unchanged. Only `catalog/AppRegistry.kt` names
 component type strings; nothing in `core/` does.
 
@@ -103,32 +125,30 @@ reverted — it solved a problem the benchmark didn't actually have.
 
 ```
 app/src/main/java/com/chiraggoswami/sduidemo/
-├── MainActivity.kt            # picks SduiScreen vs. StaticHomeScreen off a launch-intent extra
-├── core/                      # the engine — never imports catalog/data/static/ui.theme
-│   ├── schema/                 # SduiNode, ActionSpec, VisibleWhen, ScreenSchema, parser, decodeProps
-│   ├── registry/                # ComponentRegistry — type -> renderer, a map lookup
-│   └── render/                 # RenderNode, RenderContext, StateHolder, ActionDispatcher,
-│                                #   TemplateExpander, Interpolation
-├── catalog/                   # the design system — one file per component type
-│   ├── AppRegistry.kt           # the only file in the repo naming component type strings
-│   ├── ColumnNode.kt, LazyRowNode.kt, GridNode.kt        — containers
-│   ├── Header.kt, HeroCard.kt, Section.kt, ChipRow.kt,
-│   │   CarCard.kt, IconCard.kt, ImageTile.kt, ImageBanner.kt,
-│   │   ButtonNode.kt, TextNode.kt, Footer.kt              — leaves
-│   └── NodeStyle.kt             # color-token/padding/spacing resolution helpers
-├── data/                       # ScreenRepository + AssetScreenRepository — payload source
-├── screen/                     # SduiScreen, SduiScreenViewModel, ScreenUiState
-├── static/                     # hardcoded twin, zero core/catalog imports — PERF.md's other half
-└── ui/theme/                   # Color, Theme, Type
+├── MainActivity.kt
+├── core/
+│   ├── schema/    SduiNode.kt, ActionSpec.kt, VisibleWhen.kt, ScreenSchema.kt,
+│   │              ScreenParser.kt, PropsDecoding.kt
+│   ├── registry/  ComponentRegistry.kt
+│   └── render/    SduiRenderer.kt, RenderContext.kt, StateHolder.kt,
+│                  ActionDispatcher.kt, TemplateExpander.kt, Interpolation.kt
+├── catalog/       AppRegistry.kt, ColumnNode.kt, LazyRowNode.kt, GridNode.kt,
+│                  Header.kt, HeroCard.kt, Section.kt, ChipRow.kt, CarCard.kt,
+│                  IconCard.kt, ImageTile.kt, ImageBanner.kt, ButtonNode.kt,
+│                  TextNode.kt, Footer.kt, NodeStyle.kt
+├── data/          ScreenRepository.kt, AssetScreenRepository.kt
+├── screen/        SduiScreen.kt, SduiScreenViewModel.kt, ScreenUiState.kt
+├── static/        StaticHomeScreen.kt + 13 files, zero core/catalog imports
+└── ui/theme/
 
 app/src/main/assets/
-├── home_design.json           # the entire home screen: layout, content, actions — nothing hand-coded
-└── images/                     # placeholder car/banner/icon images referenced by imageUrl
+├── home_design.json   the entire home screen: layout, content, actions
+└── images/            placeholder car/banner/icon images referenced by imageUrl
 
 macrobenchmark/src/main/java/.../macrobenchmark/
-├── StartupBenchmark.kt         # TTID/TTFD, static vs. SDUI cold start
-├── SduiBreakdownBenchmark.kt   # asset-read / json-parse / view-build trace sections
-├── ScrollBenchmark.kt          # FrameTimingMetric — currently blocked, see PERF.md
+├── StartupBenchmark.kt         TTID/TTFD, static vs. SDUI cold start
+├── SduiBreakdownBenchmark.kt   asset-read / json-parse / view-build trace sections
+├── ScrollBenchmark.kt          FrameTimingMetric — currently blocked, see PERF.md
 └── Targets.kt
 ```
 
