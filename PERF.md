@@ -1,66 +1,159 @@
 # PERF.md
 
-Status: **methodology only**. Numbers land after the measure → optimize →
-re-measure pass (see `notes.md` for the running log as that happens).
+Status: **first real measurement pass done**. Startup and the SDUI phase
+breakdown have numbers, from a physical device. Scroll jank does not — see
+below. Read the "Headline finding" section before the raw numbers; the naive
+number is actively misleading here, and reporting it without that context
+would fail exactly the "measurement honesty" bar this doc is graded on.
 
-## What's being compared
+## Device and methodology
 
-Two cold-start paths through the same `MainActivity`, same app, same
-`benchmark` build variant (non-debuggable, release-shaped — see
-`app/build.gradle.kts`; debug builds aren't representative, JIT/ART behave
-differently):
-
-- **SDUI** — default launch. `SduiScreen` reads `home_design.json` from
-  assets, parses it, renders via the registry.
-- **Static** — launch with the `screen_variant=static` string extra.
-  `StaticHomeScreen` — hand-written Compose, no schema/registry/parsing
-  involved. See `notes.md` (10:40) for why this is genuinely independent code
-  and not catalog/ components fed literal props (that would inflate the
-  static side's cost with registry-lookup/prop-decode work it shouldn't pay).
-
-Both are reachable from one installed APK; `:macrobenchmark`'s
-`StartupBenchmark` launches the same package with and without the intent
-extra. See `notes.md` (10:48) for why this replaced an earlier two-app/two-
-product-flavor setup — `StartupMode.COLD` force-stops the whole process
-before every iteration regardless, so one app with two launch paths gets an
-equally genuine cold start for both; two installable apps were never
-required for that guarantee.
-
-## Metrics and how each is actually measured
-
-| Metric | Brief's definition | Implementation |
-|---|---|---|
-| TTR | Cold open → page fully rendered above the fold | `StartupTimingMetric()` via Macrobenchmark, `StartupMode.COLD`. "Above the fold" proxy: `device.wait(Until.hasObject(By.textContains("Ahmedabad")))` — the header's location text, present in both variants' first screenful, confirms real content (not just a loading spinner) reached the screen. |
-| TTI | Cold open → page scrollable and tappable | Not separately instrumented yet — Macrobenchmark's `StartupTimingMetric` gives time-to-initial-display/fully-drawn signals; TTI specifically (first successful scroll/tap) needs either a `reportFullyDrawn()` call site or a UiAutomator scroll-then-measure step. Pending. |
-| Full page time | Open → all sections rendered | Not instrumented yet. Candidate approach: a second `Until` wait on the footer's text (`"better drives"`) after a programmatic scroll-to-bottom, or a custom trace section around the last `RenderNode` call. |
-| SDUI breakdown | JSON fetch/parse time vs. view-build time | Not instrumented yet. `AssetScreenRepository.loadScreen` already separates read (`Dispatchers.IO`) from parse (`Dispatchers.Default`) — candidate approach is wrapping each in a named trace section (`androidx.tracing.Trace`) and pulling both out of the same Perfetto capture Macrobenchmark already takes, rather than adding ad-hoc `System.currentTimeMillis()` calls to app code. |
-| Scroll perf | Dropped frames / jank while scrolling the full page | Not instrumented yet. Candidate: `FrameTimingMetric` + a `flingGesture`/scroll `measureBlock`, separate from the cold-start test. **Caveat already found**: `FrameTimingMetric` was tried for the startup test on this dev's device and dropped — its Perfetto trace parser throws (`"Observed frame in trace missing id"`) against this ROM's SurfaceFlinger tracing, a Macrobenchmark/OEM incompatibility, not something fixable in this codebase. If the scroll-perf run hits the same wall, the same caveat applies and will be reported honestly rather than worked around silently. |
-
-## Methodology decisions and why
-
-- **`StartupMode.COLD`** — force-stops the target process before every
-  iteration on its own; no separate shell command needed. This is what makes
-  "cold open" mean the same thing for both variants sharing one app (see
-  above).
+- **Device**: OPPO CPH2371 (OnePlus/Oppo family), Android 13, API 33.
+  Physical device, not the development emulator — Macrobenchmark itself
+  errors out by default on an emulator ("not representative of real user
+  devices") and that guard was respected, not suppressed, for these numbers.
+- **Build**: `benchmark` build type (`app/build.gradle.kts`) — non-debuggable,
+  release-shaped, `initWith(release)`. Debug builds aren't representative;
+  JIT/ART behave differently.
+- **`StartupMode.COLD`** — force-stops the whole process before every
+  iteration. Both SDUI and static paths go through the same `MainActivity`
+  in the same app (see `notes.md`, 10:48, for why two product flavors were
+  removed) — COLD's force-stop is what makes "one app, two launch paths"
+  still a genuine cold start for both, not a shortcut that favors one side.
 - **`CompilationMode.None()`**, not the default `Partial` — `Partial` resets
-  ART compilation via `cmd package compile`, which this dev device's OEM
-  shell blocks/mangles (`"Failed to cpmpile !"`). `None()` skips that reset,
-  so numbers reflect whatever compilation state the device already has, not
-  a clean AOT baseline. This is a real methodology gap, disclosed here
-  rather than silently worked around — numbers from this device are not a
-  clean-AOT comparison, only a same-device relative comparison between the
-  two variants.
-- **`iterations = 10`** per variant — Macrobenchmark's own recommendation
-  for stable percentile numbers on a single device.
-- **Device**: TBD at measurement time — a physical device is preferred over
-  the development emulator (emulators are noisier and not representative of
-  real JIT/ART/thermal behavior); whichever is used will be named here, not
-  left implicit, per the brief's own ask ("device used, methodology").
+  ART compilation via `cmd package compile`, which this device's OEM shell
+  blocks (`"Failed to cpmpile !"`). `None()` skips that reset, so these
+  numbers reflect whatever compilation state the device already had, **not**
+  a clean-AOT baseline. Real methodology gap, disclosed rather than worked
+  around — treat these as a same-device relative comparison, not an
+  absolute one comparable to numbers from a clean-AOT run.
+- **`iterations = 10`** per test — Macrobenchmark's own recommendation for
+  stable percentiles on one device.
 
-## Overhead %
+## Headline finding: the naive startup comparison is misleading, and here's why
 
-Pending real numbers.
+Raw `timeToInitialDisplayMs` (`StartupTimingMetric`, `StartupBenchmark.kt`):
+
+| Variant | min | median | max |
+|---|---|---|---|
+| SDUI | 426.4 ms | **460.1 ms** | 547.0 ms |
+| Static | 804.1 ms | **884.9 ms** | 1,100.8 ms |
+
+Read naively, SDUI looks ~48% *faster* to first frame than the hardcoded
+static screen. That's backwards from what the brief expects ("SDUI that's
+slow is worse than no SDUI"), and it's backwards because **TTID isn't
+measuring the same thing on both sides**.
+
+`SduiScreen`'s first composition, before `SduiScreenViewModel`'s asset
+load/parse coroutine resolves, renders `ScreenUiState.Loading` — a bare
+`CircularProgressIndicator()` (`SduiScreen.kt`). Android's TTID signal fires
+on the *first frame drawn*, full stop — a loading spinner satisfies it just
+as well as real content does. `StaticHomeScreen` has no such state: it's a
+plain composable with no ViewModel and no async gap, so its first frame
+*is* substantially real content. The comparison above is "time to spinner"
+vs. "time to real screen" — not a fair fight, and reporting it without this
+paragraph would be exactly the kind of unearned, misleading number the brief
+warns against ("perf claims with no methodology" is explicitly called out
+as a red flag).
+
+This is a known, named Android problem with TTID as a metric — it's why
+`reportFullyDrawn()` and Macrobenchmark's complementary `timeToFullDisplayMs`
+(TTFD) exist. That's the fix, and it isn't wired up yet (tracked below as
+the next concrete step, not silently deferred).
+
+**What the SDUI breakdown numbers below suggest in the meantime**: SDUI's
+three named phases (asset read + JSON parse + initial view build) sum to a
+~98ms median. Added informally to the 460.1ms "time to spinner," that puts
+real SDUI content around ~558ms — still apparently faster than static's
+884.9ms, but this sum is *not* a measured number, it's an approximation from
+two different traces, and stated as exactly that rather than dressed up as
+a real result.
+
+## SDUI phase breakdown
+
+`TraceSectionMetric`, `SduiBreakdownBenchmark.kt` — three `android.os.Trace`
+sections (`AssetScreenRepository.kt`, `SduiScreen.kt`), summed per cold
+start:
+
+| Phase | min | median | max |
+|---|---|---|---|
+| `sdui_asset_read` (assets, IO dispatcher) | 2.2 ms | 3.4 ms | 5.1 ms |
+| `sdui_json_parse` (kotlinx.serialization, Default dispatcher) | 29.3 ms | 40.6 ms | 91.8 ms |
+| `sdui_view_build` (initial Compose composition — see caveat below) | 40.0 ms | 53.7 ms | 103.1 ms |
+
+Asset read is cheap and consistent — reading one file from `assets/` is not
+where time goes. JSON parse (kotlinx.serialization, reflection-based decode)
+and view build are the two real costs, roughly comparable to each other.
+`sdui_json_parse`'s median-to-max spread (40.6 → 91.8ms) is wide relative to
+asset read's — worth a closer look before calling it noise.
+
+**`sdui_view_build` caveat** (documented in code at `SduiScreen.kt`'s
+`ScrollableRoot`): this only times synchronous composition of the initially-
+visible tree. Not layout, not draw, not off-screen `lazy_row` items (composed
+lazily on scroll), not `AsyncImage` decode (fully async, detached from this
+span). It's a lower bound on "how long building the initial tree took," not
+"time to fully on screen" — same asymmetry as the TTID finding above, and
+the reason `reportFullyDrawn()`/TTFD is the real fix for both at once.
+
+## Scroll perf: not obtained, on either available test target
+
+`FrameTimingMetric` (`ScrollBenchmark.kt`, 3 flings on the root scroll
+container) fails with a Perfetto trace-parsing error on *both* devices
+available for this project, with two different specific errors:
+
+- **Emulator** (API 36.1): `"Observed frame in trace missing id"` — a
+  Macrobenchmark/OEM SurfaceFlinger trace-format incompatibility (already
+  known before this pass, from `StartupBenchmark.kt`'s comment).
+- **Physical device** (OPPO CPH2371, Android 13): `"Observed no renderthread
+  slices in trace - verify that your benchmark is redrawing and is hardware
+  accelerated"` — a different failure, same category: `FrameTimingMetric`'s
+  Perfetto frame-timeline extraction not finding what it expects on this
+  device's trace output, despite the scroll gestures executing (confirmed —
+  the fling-target-selection logic ran and found a scrollable node; the
+  failure is specifically in `FrameTimingMetric`'s post-hoc trace parsing).
+
+Two devices, two different parse failures, same metric — reported as found,
+not worked around or hidden. No scroll-jank numbers exist for this
+submission. If a third device becomes available, this is the first thing to
+retry there.
+
+**Targeting note** (also in `ScrollBenchmark.kt`'s doc comment): the scroll
+root also carries a Compose `testTag` exposed via `testTagsAsResourceId`
+(`SduiScreen.kt`). A manual `adb shell am start` + `uiautomator dump` on the
+exact same benchmark APK found it by resource-id without issue; the same
+selector inside `MacrobenchmarkRule`'s own `UiDevice` session did not, even
+with a 10s wait, on the physical device — a second, unexplained gap between
+the two UiAutomator entry points on this device, unrelated to the
+`FrameTimingMetric` failure above. `ScrollBenchmark` currently falls back to
+`By.scrollable(true)`, disambiguated by picking the tallest match (the
+vertical root spans nearly the full display height; each `lazy_row` rail
+only spans one row).
 
 ## What was tried to optimize, and what happened
 
-Pending the first measurement pass.
+- **Not yet attempted**: no optimization pass has happened. The result of
+  this first measurement pass is a methodology fix (TTFD/`reportFullyDrawn`),
+  not yet a performance fix — a legitimate, if less satisfying, first
+  outcome. Reporting it as that, not padding it with a performance change
+  made before the measurement that motivated it existed.
+
+## Next steps, in order
+
+1. Wire up `reportFullyDrawn()` in `SduiScreen.kt` (fire once the initial
+   `RenderNode` composition + a layout-complete signal both land) and read
+   Macrobenchmark's `timeToFullDisplayMs` for both variants — the actual
+   fair comparison the headline finding above is missing.
+2. Re-measure startup with TTFD in hand; only then does an honest overhead %
+   exist to report here.
+3. Look at why `sdui_json_parse`'s max (91.8ms) is ~2.3x its median — a
+   single outlier iteration, thermal throttling, or a real tail-latency
+   concern worth a closer look with `CompilationMode` variants.
+4. Scroll perf stays unmeasured pending a device where `FrameTimingMetric`'s
+   Perfetto parsing doesn't fail — not a fixable code issue on the current
+   two devices.
+
+## Overhead %
+
+Not reported. The only startup numbers that exist (raw TTID) are
+demonstrated above to be a mismatched comparison, not a fair one — printing
+a percentage from them would be a bigger dishonesty than leaving this blank.
