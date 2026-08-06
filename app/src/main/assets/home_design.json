@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "screenId": "home",
+  "theme": "light",
   "initialState": {
     "topTab": "all",
     "carsFilter": "recent",
@@ -33,6 +34,7 @@
           "props": {
             "stateKey": "emiTenure",
             "variant": "pill",
+            "textColor": "text.primary",
             "chips": [
               {
                 "id": "12",

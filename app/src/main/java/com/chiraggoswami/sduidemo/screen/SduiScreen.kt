@@ -1,5 +1,6 @@
 package com.chiraggoswami.sduidemo.screen
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import com.chiraggoswami.sduidemo.core.render.ActionDispatcher
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.render.RenderNode
 import com.chiraggoswami.sduidemo.core.render.StateHolder
+import com.chiraggoswami.sduidemo.ui.theme.SDUIDemoTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,17 +53,22 @@ private fun ScreenContent(ready: ScreenUiState.Ready, modifier: Modifier) {
     }
     val ctx = remember { RenderContext(stateHolder, AppRegistry, dispatcher) }
 
-    Box(modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-            RenderNode(ready.schema.root, ctx)
+    // schema.theme == "light" pins the screen to the light scheme regardless of system/dynamic
+    // color, so a server-authored screen can't be handed unreviewed dark-mode contrast.
+    val forceLight = ready.schema.theme == "light"
+    SDUIDemoTheme(darkTheme = !forceLight && isSystemInDarkTheme(), dynamicColor = !forceLight) {
+        Box(modifier.fillMaxSize()) {
+            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                RenderNode(ready.schema.root, ctx)
+            }
+            SnackbarHost(snackbarHostState, Modifier.align(Alignment.BottomCenter))
         }
-        SnackbarHost(snackbarHostState, Modifier.align(Alignment.BottomCenter))
-    }
 
-    stateHolder.activeSheet?.let { sheetId ->
-        ready.schema.sheets[sheetId]?.let { sheetNode ->
-            ModalBottomSheet(onDismissRequest = { stateHolder.dismissSheet() }) {
-                RenderNode(sheetNode, ctx)
+        stateHolder.activeSheet?.let { sheetId ->
+            ready.schema.sheets[sheetId]?.let { sheetNode ->
+                ModalBottomSheet(onDismissRequest = { stateHolder.dismissSheet() }) {
+                    RenderNode(sheetNode, ctx)
+                }
             }
         }
     }
