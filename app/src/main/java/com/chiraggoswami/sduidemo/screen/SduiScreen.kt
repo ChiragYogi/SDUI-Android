@@ -8,10 +8,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,6 +24,7 @@ import com.chiraggoswami.sduidemo.core.render.ActionDispatcher
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.render.RenderNode
 import com.chiraggoswami.sduidemo.core.render.StateHolder
+import kotlinx.coroutines.launch
 
 @Composable
 fun SduiScreen(screenId: String, modifier: Modifier = Modifier) {
@@ -37,11 +41,21 @@ fun SduiScreen(screenId: String, modifier: Modifier = Modifier) {
 @Composable
 private fun ScreenContent(ready: ScreenUiState.Ready, modifier: Modifier) {
     val stateHolder = remember { StateHolder(ready.schema.initialState) }
-    val dispatcher = remember { ActionDispatcher(stateHolder) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val dispatcher = remember {
+        ActionDispatcher(
+            stateHolder,
+            onShowSnackbar = { message -> coroutineScope.launch { snackbarHostState.showSnackbar(message) } },
+        )
+    }
     val ctx = remember { RenderContext(stateHolder, AppRegistry, dispatcher) }
 
-    Column(modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        RenderNode(ready.schema.root, ctx)
+    Box(modifier.fillMaxSize()) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+            RenderNode(ready.schema.root, ctx)
+        }
+        SnackbarHost(snackbarHostState, Modifier.align(Alignment.BottomCenter))
     }
 
     stateHolder.activeSheet?.let { sheetId ->

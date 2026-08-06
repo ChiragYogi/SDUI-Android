@@ -844,7 +844,8 @@
                 "emi": "@{item.emi}",
                 "footnote": "@{item.footnote}",
                 "badges": "@{item.badges}",
-                "wishlisted": "@{item.wishlisted}"
+                "wishlisted": "@{item.wishlisted}",
+                "stateKey": "wishlist_@{item.carId}"
               },
               "actions": {
                 "onClick": {
@@ -874,12 +875,55 @@
                     "sheetId": "emi_breakup"
                   }
                 },
-                "onWishlistClick": {
-                  "type": "track",
-                  "payload": {
-                    "event": "wishlist",
-                    "id": "@{item.carId}"
-                  }
+                "onWishlistSelect": {
+                  "type": "sequence",
+                  "actions": [
+                    {
+                      "type": "track",
+                      "payload": {
+                        "event": "wishlist_add",
+                        "id": "@{item.carId}"
+                      }
+                    },
+                    {
+                      "type": "set_state",
+                      "payload": {
+                        "key": "wishlist_@{item.carId}",
+                        "value": "true"
+                      }
+                    },
+                    {
+                      "type": "show_snackbar",
+                      "payload": {
+                        "message": "Car added to favourite list"
+                      }
+                    }
+                  ]
+                },
+                "onWishlistUnselect": {
+                  "type": "sequence",
+                  "actions": [
+                    {
+                      "type": "track",
+                      "payload": {
+                        "event": "wishlist_remove",
+                        "id": "@{item.carId}"
+                      }
+                    },
+                    {
+                      "type": "set_state",
+                      "payload": {
+                        "key": "wishlist_@{item.carId}",
+                        "value": "false"
+                      }
+                    },
+                    {
+                      "type": "show_snackbar",
+                      "payload": {
+                        "message": "Car removed from favourite list"
+                      }
+                    }
+                  ]
                 }
               }
             },
@@ -961,7 +1005,8 @@
                 "emi": "@{item.emi}",
                 "footnote": "@{item.footnote}",
                 "badges": "@{item.badges}",
-                "wishlisted": "@{item.wishlisted}"
+                "wishlisted": "@{item.wishlisted}",
+                "stateKey": "wishlist_@{item.carId}"
               },
               "actions": {
                 "onClick": {
@@ -991,12 +1036,55 @@
                     "sheetId": "emi_breakup"
                   }
                 },
-                "onWishlistClick": {
-                  "type": "track",
-                  "payload": {
-                    "event": "wishlist",
-                    "id": "@{item.carId}"
-                  }
+                "onWishlistSelect": {
+                  "type": "sequence",
+                  "actions": [
+                    {
+                      "type": "track",
+                      "payload": {
+                        "event": "wishlist_add",
+                        "id": "@{item.carId}"
+                      }
+                    },
+                    {
+                      "type": "set_state",
+                      "payload": {
+                        "key": "wishlist_@{item.carId}",
+                        "value": "true"
+                      }
+                    },
+                    {
+                      "type": "show_snackbar",
+                      "payload": {
+                        "message": "Car added to favourite list"
+                      }
+                    }
+                  ]
+                },
+                "onWishlistUnselect": {
+                  "type": "sequence",
+                  "actions": [
+                    {
+                      "type": "track",
+                      "payload": {
+                        "event": "wishlist_remove",
+                        "id": "@{item.carId}"
+                      }
+                    },
+                    {
+                      "type": "set_state",
+                      "payload": {
+                        "key": "wishlist_@{item.carId}",
+                        "value": "false"
+                      }
+                    },
+                    {
+                      "type": "show_snackbar",
+                      "payload": {
+                        "message": "Car removed from favourite list"
+                      }
+                    }
+                  ]
                 }
               }
             },
@@ -1103,7 +1191,8 @@
                 "imageUrl": "@{item.imageUrl}",
                 "name": "@{item.name}",
                 "variant": "@{item.variant}",
-                "rankLabel": "@{item.rankLabel}"
+                "rankLabel": "@{item.rankLabel}",
+                "stateKey": "wishlist_@{item.model}"
               },
               "actions": {
                 "onClick": {
@@ -1114,6 +1203,56 @@
                       "model": "@{item.model}"
                     }
                   }
+                },
+                "onWishlistSelect": {
+                  "type": "sequence",
+                  "actions": [
+                    {
+                      "type": "track",
+                      "payload": {
+                        "event": "wishlist_add",
+                        "id": "@{item.model}"
+                      }
+                    },
+                    {
+                      "type": "set_state",
+                      "payload": {
+                        "key": "wishlist_@{item.model}",
+                        "value": "true"
+                      }
+                    },
+                    {
+                      "type": "show_snackbar",
+                      "payload": {
+                        "message": "Car added to favourite list"
+                      }
+                    }
+                  ]
+                },
+                "onWishlistUnselect": {
+                  "type": "sequence",
+                  "actions": [
+                    {
+                      "type": "track",
+                      "payload": {
+                        "event": "wishlist_remove",
+                        "id": "@{item.model}"
+                      }
+                    },
+                    {
+                      "type": "set_state",
+                      "payload": {
+                        "key": "wishlist_@{item.model}",
+                        "value": "false"
+                      }
+                    },
+                    {
+                      "type": "show_snackbar",
+                      "payload": {
+                        "message": "Car removed from favourite list"
+                      }
+                    }
+                  ]
                 }
               }
             },
