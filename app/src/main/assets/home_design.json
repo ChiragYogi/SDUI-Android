@@ -1128,7 +1128,7 @@
           }
         },
         "props": {
-          "imageUrl": "file:///android_asset/images/banner_spotify.png",
+          "imageUrl": "https://picsum.photos/seed/picsum/200/300",
           "aspectRatio": 2.1,
           "cornerRadius": 16,
           "width": "fill"
@@ -1188,7 +1188,7 @@
             "template": {
               "type": "car_card",
               "props": {
-                "imageUrl": "@{item.imageUrl}",
+                "imageUrl": "https://picsum.photos/200/300?grayscale",
                 "name": "@{item.name}",
                 "variant": "@{item.variant}",
                 "rankLabel": "@{item.rankLabel}",
@@ -1259,7 +1259,6 @@
             "items": [
               {
                 "id": "n_seltos",
-                "imageUrl": "file:///android_asset/images/new_seltos.png",
                 "name": "Seltos",
                 "variant": "Kia",
                 "rankLabel": "1",
@@ -1267,7 +1266,6 @@
               },
               {
                 "id": "n_sonet",
-                "imageUrl": "file:///android_asset/images/new_sonet.png",
                 "name": "Sonet",
                 "variant": "Kia",
                 "rankLabel": "2",
@@ -1275,7 +1273,6 @@
               },
               {
                 "id": "n_syros",
-                "imageUrl": "file:///android_asset/images/new_syros.png",
                 "name": "Syros",
                 "variant": "Kia",
                 "rankLabel": "3",
@@ -1297,7 +1294,7 @@
           }
         },
         "props": {
-          "imageUrl": "file:///android_asset/images/banner_return.png",
+          "imageUrl": "https://placehold.net/2.png",
           "aspectRatio": 2.1,
           "cornerRadius": 16,
           "width": "fill"
@@ -1326,11 +1323,11 @@
               "start": 16,
               "top": 24,
               "end": 16,
-              "bottom": 0
+              "bottom": 24
             }
           },
           "props": {
-            "imageUrl": "file:///android_asset/images/banner_showroom.png",
+            "imageUrl": "https://placehold.net/map-400x400.png",
             "aspectRatio": 2.1,
             "cornerRadius": 16,
             "width": "fill"
@@ -1352,7 +1349,7 @@
           "bg": "surface.brand",
           "padding": {
             "start": 20,
-            "top": 48,
+            "top": 50,
             "end": 20,
             "bottom": 48
           }
