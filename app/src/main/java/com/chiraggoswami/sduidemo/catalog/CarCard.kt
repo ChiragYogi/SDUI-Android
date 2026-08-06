@@ -17,6 +17,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +33,7 @@ import com.chiraggoswami.sduidemo.core.schema.SduiNode
 import com.chiraggoswami.sduidemo.core.schema.decodeProps
 import kotlinx.serialization.Serializable
 
+@Immutable
 @Serializable
 private data class CarCardProps(
     val imageUrl: String = "",
@@ -53,7 +56,7 @@ private data class CarCardProps(
 /** Used-car listing card. Same node shape covers the sparse "trending" rail and the full "love" rail. */
 @Composable
 fun CarCard(node: SduiNode, ctx: RenderContext) {
-    val props = node.decodeProps<CarCardProps>() ?: return
+    val props = remember(node) { node.decodeProps<CarCardProps>() } ?: return
     // `wishlisted` seeds the initial value; once toggled, `stateKey` (unique per card, e.g.
     // "wishlist_creta2016") owns it — same "payload seeds, state owns" split as chip_row.
     val isWishlisted = ctx.state.get(props.stateKey)?.toBoolean() ?: props.wishlisted

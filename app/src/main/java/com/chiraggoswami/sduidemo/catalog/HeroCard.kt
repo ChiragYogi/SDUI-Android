@@ -14,6 +14,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -29,6 +31,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 private data class CtaProps(val label: String = "", val style: String = "")
 
+@Immutable
 @Serializable
 private data class HeroCardProps(
     val variant: String = "stacked",
@@ -45,7 +48,7 @@ private data class HeroCardProps(
 /** `variant` picks a pre-built arrangement; the component still owns the layout math. */
 @Composable
 fun HeroCard(node: SduiNode, ctx: RenderContext) {
-    val props = node.decodeProps<HeroCardProps>() ?: return
+    val props = remember(node) { node.decodeProps<HeroCardProps>() } ?: return
     val style = node.style.styleObj()
     Column(Modifier.fillMaxWidth().background(style.bg() ?: Color.Transparent).padding(style.paddingValues())) {
         Card(shape = RoundedCornerShape(12.dp)) {

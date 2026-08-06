@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.chiraggoswami.sduidemo.core.render.RenderContext
@@ -22,6 +23,6 @@ fun ColumnNode(node: SduiNode, ctx: RenderContext) {
             .background(style.bg() ?: Color.Transparent)
             .padding(style.paddingValues()),
     ) {
-        resolveChildren(node).forEach { RenderNode(it, ctx) }
+        remember(node) { resolveChildren(node) }.forEach { RenderNode(it, ctx) }
     }
 }

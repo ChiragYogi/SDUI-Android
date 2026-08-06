@@ -11,6 +11,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -21,9 +23,11 @@ import com.chiraggoswami.sduidemo.core.schema.decodeProps
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonPrimitive
 
+@Immutable
 @Serializable
 private data class ChipItem(val id: String, val label: String, val imageUrl: String? = null)
 
+@Immutable
 @Serializable
 private data class ChipRowProps(
     val stateKey: String,
@@ -35,7 +39,7 @@ private data class ChipRowProps(
 /** Interactive element: tapping a chip writes [ChipRowProps.stateKey] via the node's onSelect action. */
 @Composable
 fun ChipRow(node: SduiNode, ctx: RenderContext) {
-    val props = node.decodeProps<ChipRowProps>() ?: return
+    val props = remember(node) { node.decodeProps<ChipRowProps>() } ?: return
     val style = node.style.styleObj()
     val selected = ctx.state.get(props.stateKey)
     // Default assumes the brand/dark backdrop most call sites use; a chip_row on a light

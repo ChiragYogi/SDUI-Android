@@ -127,6 +127,11 @@ private fun ScrollableRoot(ready: ScreenUiState.Ready, ctx: RenderContext) {
         // practice: RenderNode is designed never to throw for data problems (malformed props,
         // unknown types) — those skip-and-log — so only a genuine programming bug reaches here,
         // and that should crash loudly rather than be silently trace-safe.
+        //
+        // Single-shot by construction, not by convention: nothing in this scope reads scroll
+        // state or any other value that changes post-commit, so ScrollableRoot recomposes once
+        // and this section fires exactly once per screen load — it's not riding an arbitrary
+        // recompose schedule.
         Trace.beginSection(SECTION_VIEW_BUILD)
         RenderNode(ready.schema.root, ctx)
         Trace.endSection()

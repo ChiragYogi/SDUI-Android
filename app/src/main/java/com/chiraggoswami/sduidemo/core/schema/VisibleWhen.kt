@@ -1,8 +1,10 @@
 package com.chiraggoswami.sduidemo.core.schema
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Immutable
 @Serializable
 data class VisibleWhen(
     val state: String? = null,

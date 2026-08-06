@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.chiraggoswami.sduidemo.core.render.RenderContext
@@ -17,7 +18,7 @@ import com.chiraggoswami.sduidemo.core.schema.SduiNode
 @Composable
 fun LazyRowNode(node: SduiNode, ctx: RenderContext) {
     val style = node.style.styleObj()
-    val children = resolveChildren(node)
+    val children = remember(node) { resolveChildren(node) }
     LazyRow(
         Modifier.fillMaxWidth().padding(style.paddingValues()),
         horizontalArrangement = Arrangement.spacedBy(style.itemSpacingDp().dp),
