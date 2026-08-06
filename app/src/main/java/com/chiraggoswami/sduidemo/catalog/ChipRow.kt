@@ -29,6 +29,7 @@ private data class ChipRowProps(
     val stateKey: String,
     val variant: String = "pill",
     val chips: List<ChipItem> = emptyList(),
+    val textColor: String? = null,
 )
 
 /** Interactive element: tapping a chip writes [ChipRowProps.stateKey] via the node's onSelect action. */
@@ -37,6 +38,9 @@ fun ChipRow(node: SduiNode, ctx: RenderContext) {
     val props = node.decodeProps<ChipRowProps>() ?: return
     val style = node.style.styleObj()
     val selected = ctx.state.get(props.stateKey)
+    // Default assumes the brand/dark backdrop most call sites use; a chip_row on a light
+    // section (e.g. surface.default) must set textColor explicitly or it's invisible.
+    val baseColor = resolveColor(props.textColor) ?: Color.White
 
     Row(
         Modifier
@@ -50,10 +54,10 @@ fun ChipRow(node: SduiNode, ctx: RenderContext) {
             val isSelected = chip.id == selected
             Text(
                 chip.label,
-                color = if (isSelected) Color.White else Color.White.copy(alpha = 0.7f),
+                color = if (isSelected) baseColor else baseColor.copy(alpha = 0.7f),
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
-                    .background(if (isSelected) Color.White.copy(alpha = 0.25f) else Color.Transparent)
+                    .background(if (isSelected) baseColor.copy(alpha = 0.12f) else Color.Transparent)
                     .clickable {
                         node.actions?.get("onSelect")?.let {
                             ctx.dispatch(it, mapOf("chip.id" to JsonPrimitive(chip.id)))

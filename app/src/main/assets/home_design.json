@@ -802,7 +802,8 @@
                   "label": "Hot deals"
                 }
               ],
-              "width": "fill"
+              "width": "fill",
+              "textColor": "text.primary"
             },
             "actions": {
               "onSelect": {
