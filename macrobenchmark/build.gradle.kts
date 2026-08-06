@@ -20,14 +20,6 @@ android {
     targetProjectPath = ":app"
     experimentalProperties["android.experimental.self-instrumenting"] = true
 
-    // Mirrors :app's flavors so `connectedStaticBenchmarkAndroidTest` /
-    // `connectedSduiBenchmarkAndroidTest` each target the matching :app flavor.
-    flavorDimensions += "renderer"
-    productFlavors {
-        create("static") { dimension = "renderer" }
-        create("sdui") { dimension = "renderer" }
-    }
-
     buildTypes {
         // Matches :app's "benchmark" build type by name. The test APK itself can stay
         // debuggable; it's the target app under instrumentation that must not be.

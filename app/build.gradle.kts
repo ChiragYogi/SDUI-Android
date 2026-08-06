@@ -35,18 +35,6 @@ android {
             isDebuggable = false
         }
     }
-    // Two variants of the same screen — :macrobenchmark compares them head to head.
-    flavorDimensions += "renderer"
-    productFlavors {
-        create("static") {
-            dimension = "renderer"
-            applicationIdSuffix = ".static"
-        }
-        create("sdui") {
-            dimension = "renderer"
-            applicationIdSuffix = ".sdui"
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

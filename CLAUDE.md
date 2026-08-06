@@ -10,21 +10,20 @@ The schema is the product. The renderer must work for screens that do not exist 
 
 ## Commands
 
-`:app` has two product flavors — `sdui` (renders `SduiScreen`) and `static`
-(renders `StaticHomeScreen`), picked in `MainActivity` by `BuildConfig.FLAVOR`.
-Different `applicationIdSuffix`, so both install side by side; flavor-specific
-`strings.xml` gives each a distinct launcher label ("SDUI Demo (SDUI)" /
-"SDUI Demo (Static)") so they're not two identical icons. Plain `assembleDebug`/
-`installDebug` are ambiguous now — always qualify with the flavor.
+One app, one launcher icon. `MainActivity` renders `StaticHomeScreen` when
+launched with the `screen_variant=static` string extra (see
+`MainActivity.EXTRA_SCREEN_VARIANT`/`VARIANT_STATIC`), `SduiScreen` otherwise —
+that's how `macrobenchmark/StartupBenchmark.kt` gets a genuine cold start for
+both without needing a second installable app.
 
 - Build: `./gradlew build`
-- Install the SDUI variant: `./gradlew installSduiDebug`
-- Install the static variant: `./gradlew installStaticDebug`
-- Install both side by side: `./gradlew installSduiDebug installStaticDebug`
+- Assemble debug APK: `./gradlew assembleDebug`
+- Install on connected device/emulator: `./gradlew installDebug`
+- Open the static twin manually: `adb shell am start -n com.chiraggoswami.sduidemo/.MainActivity --es screen_variant static`
 - Unit tests: `./gradlew test`
 - Single unit test: `./gradlew testDebugUnitTest --tests "com.chiraggoswami.sduidemo.ExampleUnitTest"`
 - Instrumented tests (needs a connected device/emulator): `./gradlew connectedAndroidTest`
-- Cold-start benchmark (needs a connected device/emulator, `benchmark` build type — see `macrobenchmark/`): `./gradlew :macrobenchmark:connectedSduiBenchmarkAndroidTest :macrobenchmark:connectedStaticBenchmarkAndroidTest`
+- Cold-start benchmark (needs a connected device/emulator, `benchmark` build type — see `macrobenchmark/`): `./gradlew :macrobenchmark:connectedBenchmarkAndroidTest`
 - Lint: `./gradlew lint`
 
 ## Stack facts
