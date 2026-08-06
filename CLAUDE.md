@@ -101,7 +101,8 @@ ui/theme/  colors, typography
 - Trigger keys (`onClick`, `onSelect`, `onEmiClick`) live in the node's `actions`
   map. A component fires a trigger and never knows what it does.
 - Action set is closed: `navigate`, `set_state`, `open_sheet`, `dismiss`,
-  `open_url`, `track`, `sequence`. Adding one is a deliberate schema change.
+  `open_url`, `track`, `show_snackbar`, `sequence`. Adding one is a deliberate
+  schema change.
 - `navigate` payload is `{ route, params, deeplink? }` — a named route, not a URI.
   `deeplink` is for external/web targets only.
 - Unknown action type or unknown route → log and ignore. Never crash.

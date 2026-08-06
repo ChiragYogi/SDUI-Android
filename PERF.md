@@ -19,6 +19,47 @@ limitation** — submission deadline, with the stability/memoization pass
 still noisy at 5 iterations. Both are named in "Next steps" as the first
 things to pick back up, not silently dropped.
 
+## Mapping to the brief's metric table
+
+The brief asks for five specific rows: TTR, TTI, Full page time, SDUI
+breakdown, Scroll perf. This doc uses Android/Macrobenchmark's own
+terminology (TTID/TTFD) rather than reinventing those names, so here's the
+explicit mapping — what's real, what's a proxy, what's an open gap:
+
+- **TTR** ("cold open → page fully rendered above the fold") ≈ **TTFD**,
+  see "The fair comparison: TTFD" below. `ReportDrawnWhen`/`ReportDrawn`
+  fire once the initially-visible tree finishes composing — the closest
+  available signal to "above the fold, rendered." Caveat: this doesn't wait
+  for `AsyncImage` decode (see "SDUI phase breakdown"'s `sdui_view_build`
+  caveat), so on a slow network a "rendered" frame could still show image
+  placeholders. TTR here means layout/composition complete, not "every
+  pixel final."
+- **TTI** ("cold open → page scrollable and tappable") — **not separately
+  measured**. Compose surfaces typically become hit-testable at roughly the
+  same point TTFD fires (layout completes before input dispatch attaches),
+  so TTFD is a reasonable proxy, but this was never isolated or confirmed
+  with its own instrumentation (e.g. a scripted tap/scroll immediately
+  after TTFD to prove real interactivity). Stated as a gap, not implied as
+  covered by reusing the TTFD number silently.
+- **Full page time** ("open → all sections rendered") — **not measured**.
+  TTFD and `sdui_view_build` both explicitly cover only the
+  initially-visible tree — off-screen `lazy_row` items compose lazily on
+  scroll and were never included in any span here. A true "all sections"
+  number would need either a scroll-to-bottom step inside the benchmark or
+  a trace section wrapping every lazy composition, neither of which exists
+  today.
+- **SDUI breakdown** ("JSON fetch/parse time vs view-build time") —
+  measured, see "SDUI phase breakdown": `sdui_asset_read` + `sdui_json_parse`
+  vs `sdui_view_build`.
+- **Scroll perf** ("dropped frames/jank") — not obtained, see "Scroll perf"
+  below — both available devices fail `FrameTimingMetric`'s Perfetto
+  parsing, in two different ways.
+
+Net: of the five requested rows, SDUI breakdown has real numbers and TTR has
+a real number via the TTFD proxy (with its own stated caveat); TTI is
+inferred, not independently measured; full page time and scroll perf are
+open gaps, both disclosed with the specific reason rather than left unaddressed.
+
 ## Device and methodology
 
 - **Device**: OPPO CPH2371 (OnePlus/Oppo family), Android 13, API 33.
