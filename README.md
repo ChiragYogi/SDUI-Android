@@ -5,11 +5,13 @@ client renders it natively in Compose. `home_design.json` is the entire home
 screen — layout, content, and interaction wiring — with zero of it
 hand-coded per-screen on the client.
 
-Status: schema/renderer/catalog built and exercised; `PERF.md` and
-`COVERAGE.md`'s final numbers/claims are pending the measure → optimize
-pass and the second-screen dry run (see those files, and `notes.md` for the
-running log). This README's own Trade-offs section is provisional for the
-same reason.
+Status: schema/renderer/catalog built and exercised. `PERF.md` has real
+startup/SDUI-breakdown numbers, an honest overhead %, and a completed
+measure → optimize pass (Compose stability + memoization — see its "What
+was tried to optimize" section). `COVERAGE.md` has an honest coverage
+estimate. What's still open in both: scroll perf (blocked on tooling, not
+code — see `PERF.md`) and the second-screen dry run, which happens live
+(see `notes.md` for the full running log).
 
 **Note on commit history**: if you're viewing this from an extracted zip
 rather than a clone, the `.git` folder (and with it the full commit history —
@@ -294,22 +296,24 @@ action types. Adding a component is one file here plus one line in
 
 ## Trade-offs
 
-Provisional — completed once `PERF.md` has real numbers. Known candidates
-already visible without measuring:
-
 - Per-component prop decoding goes through reflection-based
   `kotlinx.serialization` on every render, not a stricter/faster
   hand-rolled decode. Chosen deliberately — it's what makes "unknown/
   malformed props skip the node instead of crashing" cheap to guarantee
-  uniformly — but worth checking whether it shows up as a meaningful slice
-  of view-build time once `PERF.md`'s SDUI breakdown exists.
-- `resolveChildren()` re-expands `template`+`items` inside the composable
-  body of whichever container calls it; whether that re-expansion is
-  actually re-running on recompositions that don't need it (vs. being
-  skipped by Compose's structural equality checks) is unverified — a
-  candidate profiling target, not a claimed problem.
+  uniformly. Now a real, measured cost, not a speculative one: `PERF.md`'s
+  SDUI breakdown puts `sdui_json_parse` at 40.6ms median — real, but not
+  dominant next to `sdui_view_build`'s 53.7ms.
+- ~~`resolveChildren()` re-expands `template`+`items` on every
+  recomposition, unverified whether it re-runs unnecessarily~~ — fixed.
+  It and every `decodeProps<T>()` call were unmemoized; both are now
+  `remember(node) { ... }`-wrapped across every `catalog/` component (see
+  `PERF.md`'s "What was tried to optimize"). Left in strikethrough rather
+  than deleted — it was a real, disclosed gap, and the fix is worth being
+  able to point at.
 - Full-tree recomposition scoping (does tapping one `car_card`'s wishlist
-  heart recompose just that card, or more of the tree around it) is likewise
-  unmeasured. `StateHolder` uses `mutableStateMapOf`, which scopes state
-  reads per key, but whether every read site is narrow enough to benefit
-  hasn't been checked with the Layout Inspector's recomposition counts.
+  heart recompose just that card, or more of the tree around it) is
+  improved but not confirmed: `SduiNode`/`RenderContext`/the props classes
+  are now `@Immutable`/`@Stable`, which is what makes narrow recomposition
+  *possible*, but nobody has checked actual recomposition counts with the
+  Layout Inspector to confirm it's happening. Stated as improved-not-proven,
+  not claimed as fixed.
