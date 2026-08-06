@@ -10,12 +10,21 @@ The schema is the product. The renderer must work for screens that do not exist 
 
 ## Commands
 
+`:app` has two product flavors — `sdui` (renders `SduiScreen`) and `static`
+(renders `StaticHomeScreen`), picked in `MainActivity` by `BuildConfig.FLAVOR`.
+Different `applicationIdSuffix`, so both install side by side; flavor-specific
+`strings.xml` gives each a distinct launcher label ("SDUI Demo (SDUI)" /
+"SDUI Demo (Static)") so they're not two identical icons. Plain `assembleDebug`/
+`installDebug` are ambiguous now — always qualify with the flavor.
+
 - Build: `./gradlew build`
-- Assemble debug APK: `./gradlew assembleDebug`
-- Install on connected device/emulator: `./gradlew installDebug`
+- Install the SDUI variant: `./gradlew installSduiDebug`
+- Install the static variant: `./gradlew installStaticDebug`
+- Install both side by side: `./gradlew installSduiDebug installStaticDebug`
 - Unit tests: `./gradlew test`
 - Single unit test: `./gradlew testDebugUnitTest --tests "com.chiraggoswami.sduidemo.ExampleUnitTest"`
 - Instrumented tests (needs a connected device/emulator): `./gradlew connectedAndroidTest`
+- Cold-start benchmark (needs a connected device/emulator, `benchmark` build type — see `macrobenchmark/`): `./gradlew :macrobenchmark:connectedSduiBenchmarkAndroidTest :macrobenchmark:connectedStaticBenchmarkAndroidTest`
 - Lint: `./gradlew lint`
 
 ## Stack facts
