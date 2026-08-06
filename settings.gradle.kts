@@ -24,4 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "SDUI Demo"
 include(":app")
+include(":macrobenchmark")
  

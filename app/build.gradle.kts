@@ -26,6 +26,26 @@ android {
                 enable = false
             }
         }
+        // Non-debuggable, release-shaped build for macrobenchmark to target. Debug builds
+        // aren't representative of real startup/frame timing — the JIT/ART behavior differs.
+        create("benchmark") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+        }
+    }
+    // Two variants of the same screen — :macrobenchmark compares them head to head.
+    flavorDimensions += "renderer"
+    productFlavors {
+        create("static") {
+            dimension = "renderer"
+            applicationIdSuffix = ".static"
+        }
+        create("sdui") {
+            dimension = "renderer"
+            applicationIdSuffix = ".sdui"
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
