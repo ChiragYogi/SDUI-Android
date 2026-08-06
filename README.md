@@ -11,6 +11,13 @@ pass and the second-screen dry run (see those files, and `notes.md` for the
 running log). This README's own Trade-offs section is provisional for the
 same reason.
 
+## Video
+
+3-5 min screen recording: JSON rendering into the live screen, the EMI tenure
+selector + bottom sheet, the `showroom_rail` unknown-component fallback, and
+one live JSON edit (change `home_design.json`, re-run, page changes with zero
+client code touched). Link: **`<add recording link here>`**.
+
 ## Which screen, and why
 
 The Cars24 home/landing page. It clears every complexity bar the brief sets
@@ -55,14 +62,6 @@ See `CLAUDE.md` for the full command reference and repo conventions.
 
 ## Architecture overview
 
-```
-core/      schema, registry, render      — the engine
-catalog/   UI components + registry      — the design system
-data/      ScreenRepository              — payload source
-static/    hardcoded screen              — benchmark twin
-ui/theme/  colors, typography
-```
-
 `core/` never imports from `catalog/`/`data/`/`static/`/`ui.theme` — it's
 liftable into its own module unchanged. Only `catalog/AppRegistry.kt` names
 component type strings; nothing in `core/` does.
@@ -99,6 +98,84 @@ start for both (`StartupMode.COLD` force-stops the whole process before every
 iteration regardless of how many entry points live in one app). See
 `notes.md` (10:48) for why an earlier two-product-flavor version of this was
 reverted — it solved a problem the benchmark didn't actually have.
+
+### Directory structure
+
+```
+app/src/main/java/com/chiraggoswami/sduidemo/
+├── MainActivity.kt            # picks SduiScreen vs. StaticHomeScreen off a launch-intent extra
+├── core/                      # the engine — never imports catalog/data/static/ui.theme
+│   ├── schema/                 # SduiNode, ActionSpec, VisibleWhen, ScreenSchema, parser, decodeProps
+│   ├── registry/                # ComponentRegistry — type -> renderer, a map lookup
+│   └── render/                 # RenderNode, RenderContext, StateHolder, ActionDispatcher,
+│                                #   TemplateExpander, Interpolation
+├── catalog/                   # the design system — one file per component type
+│   ├── AppRegistry.kt           # the only file in the repo naming component type strings
+│   ├── ColumnNode.kt, LazyRowNode.kt, GridNode.kt        — containers
+│   ├── Header.kt, HeroCard.kt, Section.kt, ChipRow.kt,
+│   │   CarCard.kt, IconCard.kt, ImageTile.kt, ImageBanner.kt,
+│   │   ButtonNode.kt, TextNode.kt, Footer.kt              — leaves
+│   └── NodeStyle.kt             # color-token/padding/spacing resolution helpers
+├── data/                       # ScreenRepository + AssetScreenRepository — payload source
+├── screen/                     # SduiScreen, SduiScreenViewModel, ScreenUiState
+├── static/                     # hardcoded twin, zero core/catalog imports — PERF.md's other half
+└── ui/theme/                   # Color, Theme, Type
+
+app/src/main/assets/
+├── home_design.json           # the entire home screen: layout, content, actions — nothing hand-coded
+└── images/                     # placeholder car/banner/icon images referenced by imageUrl
+
+macrobenchmark/src/main/java/.../macrobenchmark/
+├── StartupBenchmark.kt         # TTID/TTFD, static vs. SDUI cold start
+├── SduiBreakdownBenchmark.kt   # asset-read / json-parse / view-build trace sections
+├── ScrollBenchmark.kt          # FrameTimingMetric — currently blocked, see PERF.md
+└── Targets.kt
+```
+
+### Example: a JSON node and its component, side by side
+
+`home_design.json`'s EMI sheet dismiss button:
+
+```json
+{
+  "id": "emi_cta",
+  "type": "button",
+  "props": { "label": "Got it", "variant": "primary" },
+  "actions": {
+    "onClick": {
+      "type": "sequence",
+      "actions": [
+        { "type": "track", "payload": { "event": "emi_sheet_dismiss" } },
+        { "type": "dismiss", "payload": {} }
+      ]
+    }
+  }
+}
+```
+
+Its entire renderer, `catalog/ButtonNode.kt` — every component in the catalog
+follows this exact shape (decode props locally, read `node.actions` for
+triggers, never touch anything the registry or `core/` owns):
+
+```kotlin
+@Serializable
+private data class ButtonProps(val label: String = "", val variant: String = "primary")
+
+@Composable
+fun ButtonNode(node: SduiNode, ctx: RenderContext) {
+    val props = node.decodeProps<ButtonProps>() ?: return PropsDecodeFailurePlaceholder(node)
+    val onClick: () -> Unit = { node.actions?.get("onClick")?.let(ctx::dispatch) }
+    when (props.variant) {
+        "secondary" -> OutlinedButton(onClick = onClick) { Text(props.label) }
+        else -> Button(onClick = onClick) { Text(props.label) }
+    }
+}
+```
+
+`ButtonNode` never knows what `onClick` *does* — `ctx.dispatch` hands the
+`ActionSpec` to `ActionDispatcher`, which is the only place that interprets
+action types. Adding a component is one file here plus one line in
+`AppRegistry.kt`; nothing in `core/` changes shape.
 
 ## Schema design rationale
 
