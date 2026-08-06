@@ -22,7 +22,7 @@ strings.
 | `hero_card` | `HeroCard.kt` | Promo card. `variant: "split"` (image beside content) or `"stacked"` (image on top) — same props, different arrangement, zero code. | `variant`, `eyebrow`/`title`/`subtitle`/`tags[]`/`priceBadge`, `cta.label`; `onCtaClick` |
 | `section` | `Section.kt` | Title + optional badge + optional trailing link, wrapping any children. | `title`, `titleStyle` (size/bold/color), `badge`, `trailing.label`; `onTrailingClick` |
 | `lazy_row` | `LazyRowNode.kt` | Horizontal carousel/rail. | `style.itemSpacing`; children literal or `template`+`items` |
-| `grid` | `GridNode.kt` | Fixed-column wrap grid — `columns: 1` reads as a vertical list. | `columns`; same children resolution as `lazy_row`/`column` — swapping the `type` between these three is a pure JSON edit (see `notes.md`, 11:00) |
+| `grid` | `GridNode.kt` | Fixed-column wrap grid — `columns: 1` reads as a vertical list. | `columns`; same children resolution as `lazy_row`/`column` — swapping the `type` between these three is a pure JSON edit |
 | `image_tile` | `ImageTile.kt` | Icon- or card-sized image + title, overlay or below. | `title`, `imageUrl`, `imageFill`, `titleStyle.position` (`top_start`/`bottom_start`/`below`), `width`/`height` |
 | `car_card` | `CarCard.kt` | Used-car / new-car listing card: image, wishlist heart, price, EMI, badges, or a compact rank-badge variant for "trending". Same node shape covers both. | `width` (fixed dp or `"fill"`), `stateKey` (wishlist), `specs[]`/`badges[]`; `onClick`/`onEmiClick`/`onWishlistSelect`/`onWishlistUnselect` |
 | `icon_card` | `IconCard.kt` | Small icon + label leaf, sized to content — the grid's service-tile template. | `title`, `imageUrl`; `onClick` |

@@ -10,8 +10,7 @@ startup/SDUI-breakdown numbers, an honest overhead %, and a completed
 measure → optimize pass (Compose stability + memoization — see its "What
 was tried to optimize" section). `COVERAGE.md` has an honest coverage
 estimate. What's still open in both: scroll perf (blocked on tooling, not
-code — see `PERF.md`) and the second-screen dry run, which happens live
-(see `notes.md` for the full running log).
+code — see `PERF.md`) and the second-screen dry run, which happens live.
 
 **Note on commit history**: if you're viewing this from an extracted zip
 rather than a clone, the `.git` folder (and with it the full commit history —
@@ -121,9 +120,13 @@ prop-decode cost, which is the point of the comparison (`PERF.md`). It's not
 a second app or Gradle flavor: `MainActivity` picks between the two off a
 launch-time intent extra, which still gives `:macrobenchmark` a genuine cold
 start for both (`StartupMode.COLD` force-stops the whole process before every
-iteration regardless of how many entry points live in one app). See
-`notes.md` (10:48) for why an earlier two-product-flavor version of this was
-reverted — it solved a problem the benchmark didn't actually have.
+iteration regardless of how many entry points live in one app). An earlier
+version used two Gradle product flavors instead (two `applicationId`s, two
+launcher icons) — reverted, since COLD's force-stop already gives two
+genuine cold starts from one installable app; the flavor split solved a
+problem the benchmark didn't actually have, and cost a launcher-icon
+labeling bug (`app_name` was one shared string resource) it didn't need to
+in the process.
 
 ### Directory structure
 
@@ -226,7 +229,7 @@ action types. Adding a component is one file here plus one line in
   the same `resolveChildren()`.** The payload's repeat structure is
   decoupled from its visual arrangement — a rail becoming a grid is a
   `type` string edit, not a data reshape. Demonstrated live: swapping
-  `lazy_row`→`grid` on "Used cars you'll love" (see `notes.md`, 11:00).
+  `lazy_row`→`grid` on "Used cars you'll love".
 - **`visibleWhen` is one state key, one operator**
   (`equals`/`notEquals`/`in`/`notIn`) — deliberately not a boolean
   expression evaluator. A screen needing compound conditions is a documented

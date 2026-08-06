@@ -71,9 +71,11 @@ open gaps, both disclosed with the specific reason rather than left unaddressed.
   JIT/ART behave differently.
 - **`StartupMode.COLD`** — force-stops the whole process before every
   iteration. Both SDUI and static paths go through the same `MainActivity`
-  in the same app (see `notes.md`, 10:48, for why two product flavors were
-  removed) — COLD's force-stop is what makes "one app, two launch paths"
-  still a genuine cold start for both, not a shortcut that favors one side.
+  in the same app, picked by a launch-intent extra rather than separate
+  Gradle product flavors (an earlier two-flavor version was reverted —
+  COLD's force-stop already makes "one app, two launch paths" a genuine
+  cold start for both, so the flavor split was solving a problem the
+  benchmark didn't have) — not a shortcut that favors one side.
 - **`CompilationMode.None()`**, not the default `Partial` — `Partial` resets
   ART compilation via `cmd package compile`, which this device's OEM shell
   blocks (`"Failed to cpmpile !"`). `None()` skips that reset, so these
