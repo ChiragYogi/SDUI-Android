@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.chiraggoswami.sduidemo.core.render.PropsDecodeFailurePlaceholder
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.render.RenderNode
 import com.chiraggoswami.sduidemo.core.render.resolveChildren
@@ -49,7 +50,7 @@ private data class SectionProps(
 
 @Composable
 fun Section(node: SduiNode, ctx: RenderContext) {
-    val props = remember(node) { node.decodeProps<SectionProps>() } ?: return
+    val props = remember(node) { node.decodeProps<SectionProps>() } ?: return PropsDecodeFailurePlaceholder(node)
     val style = node.style.styleObj()
     Column(Modifier.fillMaxWidth().background(style.bg() ?: Color.Transparent).padding(style.paddingValues())) {
         Row(

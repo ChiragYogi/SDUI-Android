@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.chiraggoswami.sduidemo.core.render.PropsDecodeFailurePlaceholder
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.schema.SduiNode
 import com.chiraggoswami.sduidemo.core.schema.decodeProps
@@ -39,7 +40,7 @@ private data class ChipRowProps(
 /** Interactive element: tapping a chip writes [ChipRowProps.stateKey] via the node's onSelect action. */
 @Composable
 fun ChipRow(node: SduiNode, ctx: RenderContext) {
-    val props = remember(node) { node.decodeProps<ChipRowProps>() } ?: return
+    val props = remember(node) { node.decodeProps<ChipRowProps>() } ?: return PropsDecodeFailurePlaceholder(node)
     val style = node.style.styleObj()
     val selected = ctx.state.get(props.stateKey)
     // Default assumes the brand/dark backdrop most call sites use; a chip_row on a light

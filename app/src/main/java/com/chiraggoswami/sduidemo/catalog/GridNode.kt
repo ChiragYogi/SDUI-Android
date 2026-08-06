@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.chiraggoswami.sduidemo.core.render.PropsDecodeFailurePlaceholder
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.render.RenderNode
 import com.chiraggoswami.sduidemo.core.render.resolveChildren
@@ -22,7 +23,7 @@ private data class GridProps(val columns: Int = 2)
 /** Fixed-column wrap grid. Children resolved via [resolveChildren] — literal or template+items. */
 @Composable
 fun GridNode(node: SduiNode, ctx: RenderContext) {
-    val props = remember(node) { node.decodeProps<GridProps>() } ?: return
+    val props = remember(node) { node.decodeProps<GridProps>() } ?: return PropsDecodeFailurePlaceholder(node)
     val style = node.style.styleObj()
     val spacing = style.itemSpacingDp().dp
     val children = remember(node) { resolveChildren(node) }

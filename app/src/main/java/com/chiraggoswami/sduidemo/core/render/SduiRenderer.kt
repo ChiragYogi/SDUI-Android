@@ -28,13 +28,29 @@ fun RenderNode(node: SduiNode, ctx: RenderContext) {
         node.fallback != null -> RenderNode(node.fallback, ctx)
         else -> {
             Log.w(TAG, "unknown or missing type '${node.type}' (id=${node.id}) — skipped")
-            if (BuildConfig.DEBUG) {
-                Text(
-                    "⚠ unknown component: ${node.type}",
-                    color = Color.Red,
-                    modifier = Modifier.background(Color(0x22FF0000)).padding(8.dp),
-                )
-            }
+            DebugSkipPlaceholder("⚠ unknown component: ${node.type}")
         }
+    }
+}
+
+/**
+ * A component's props failed to decode (missing/malformed JSON) — `decodeProps()` already
+ * logged the specific cause. Every `catalog/` component calls this from its own
+ * `?: return` so the skip is visible in debug builds, not just logcat, same as the
+ * unknown-type case above.
+ */
+@Composable
+fun PropsDecodeFailurePlaceholder(node: SduiNode) {
+    DebugSkipPlaceholder("⚠ malformed props: ${node.type} (id=${node.id})")
+}
+
+@Composable
+private fun DebugSkipPlaceholder(message: String) {
+    if (BuildConfig.DEBUG) {
+        Text(
+            message,
+            color = Color.Red,
+            modifier = Modifier.background(Color(0x22FF0000)).padding(8.dp),
+        )
     }
 }

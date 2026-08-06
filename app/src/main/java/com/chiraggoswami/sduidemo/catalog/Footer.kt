@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.chiraggoswami.sduidemo.core.render.PropsDecodeFailurePlaceholder
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.schema.SduiNode
 import com.chiraggoswami.sduidemo.core.schema.decodeProps
@@ -23,7 +24,7 @@ private data class FooterProps(val headline: String = "", val subtitle: String =
 /** Static screen-end sign-off. No actions — it's a terminal node, not a CTA. */
 @Composable
 fun Footer(node: SduiNode, ctx: RenderContext) {
-    val props = node.decodeProps<FooterProps>() ?: return
+    val props = node.decodeProps<FooterProps>() ?: return PropsDecodeFailurePlaceholder(node)
     val style = node.style.styleObj()
     val color = resolveColor(props.textColor) ?: Color.White
     Column(

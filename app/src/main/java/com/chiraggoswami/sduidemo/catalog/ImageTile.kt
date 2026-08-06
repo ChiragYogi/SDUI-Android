@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.chiraggoswami.sduidemo.core.render.PropsDecodeFailurePlaceholder
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.schema.SduiNode
 import com.chiraggoswami.sduidemo.core.schema.decodeProps
@@ -49,7 +50,7 @@ private data class ImageTileProps(
 
 @Composable
 fun ImageTile(node: SduiNode, ctx: RenderContext) {
-    val props = node.decodeProps<ImageTileProps>() ?: return
+    val props = node.decodeProps<ImageTileProps>() ?: return PropsDecodeFailurePlaceholder(node)
     val titleStyle = props.titleStyle
     Column(Modifier.width(props.width.dp).clickable { node.actions?.get("onClick")?.let(ctx::dispatch) }) {
         Box(

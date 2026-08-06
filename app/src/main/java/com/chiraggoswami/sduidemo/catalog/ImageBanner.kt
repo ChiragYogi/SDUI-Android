@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.chiraggoswami.sduidemo.core.render.PropsDecodeFailurePlaceholder
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.schema.SduiNode
 import com.chiraggoswami.sduidemo.core.schema.decodeProps
@@ -29,7 +30,7 @@ private data class ImageBannerProps(
 /** Full-width tappable promo image. Ratio/corner radius are schema-driven, no client-side crop math. */
 @Composable
 fun ImageBanner(node: SduiNode, ctx: RenderContext) {
-    val props = node.decodeProps<ImageBannerProps>() ?: return
+    val props = node.decodeProps<ImageBannerProps>() ?: return PropsDecodeFailurePlaceholder(node)
     val style = node.style.styleObj()
     Box(Modifier.fillMaxWidth().background(style.bg() ?: Color.Transparent).padding(style.paddingValues())) {
         AsyncImage(

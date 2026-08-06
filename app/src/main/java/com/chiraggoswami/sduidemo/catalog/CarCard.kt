@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.chiraggoswami.sduidemo.core.render.PropsDecodeFailurePlaceholder
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.schema.SduiNode
 import com.chiraggoswami.sduidemo.core.schema.decodeProps
@@ -56,7 +57,7 @@ private data class CarCardProps(
 /** Used-car listing card. Same node shape covers the sparse "trending" rail and the full "love" rail. */
 @Composable
 fun CarCard(node: SduiNode, ctx: RenderContext) {
-    val props = remember(node) { node.decodeProps<CarCardProps>() } ?: return
+    val props = remember(node) { node.decodeProps<CarCardProps>() } ?: return PropsDecodeFailurePlaceholder(node)
     // `wishlisted` seeds the initial value; once toggled, `stateKey` (unique per card, e.g.
     // "wishlist_creta2016") owns it — same "payload seeds, state owns" split as chip_row.
     val isWishlisted = ctx.state.get(props.stateKey)?.toBoolean() ?: props.wishlisted

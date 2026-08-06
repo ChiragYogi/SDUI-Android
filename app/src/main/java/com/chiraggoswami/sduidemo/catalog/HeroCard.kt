@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.chiraggoswami.sduidemo.core.render.PropsDecodeFailurePlaceholder
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.schema.SduiNode
 import com.chiraggoswami.sduidemo.core.schema.decodeProps
@@ -48,7 +49,7 @@ private data class HeroCardProps(
 /** `variant` picks a pre-built arrangement; the component still owns the layout math. */
 @Composable
 fun HeroCard(node: SduiNode, ctx: RenderContext) {
-    val props = remember(node) { node.decodeProps<HeroCardProps>() } ?: return
+    val props = remember(node) { node.decodeProps<HeroCardProps>() } ?: return PropsDecodeFailurePlaceholder(node)
     val style = node.style.styleObj()
     Column(Modifier.fillMaxWidth().background(style.bg() ?: Color.Transparent).padding(style.paddingValues())) {
         Card(shape = RoundedCornerShape(12.dp)) {

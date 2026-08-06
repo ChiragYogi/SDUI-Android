@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.chiraggoswami.sduidemo.core.render.PropsDecodeFailurePlaceholder
 import com.chiraggoswami.sduidemo.core.render.RenderContext
 import com.chiraggoswami.sduidemo.core.schema.SduiNode
 import com.chiraggoswami.sduidemo.core.schema.decodeProps
@@ -33,7 +34,7 @@ private data class HeaderProps(
 
 @Composable
 fun Header(node: SduiNode, ctx: RenderContext) {
-    val props = node.decodeProps<HeaderProps>() ?: return
+    val props = node.decodeProps<HeaderProps>() ?: return PropsDecodeFailurePlaceholder(node)
     val style = node.style.styleObj()
     Column(
         Modifier.fillMaxWidth().background(style.bg() ?: Color(0xFF5B4FE9)).padding(style.paddingValues()),
