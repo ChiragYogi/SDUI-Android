@@ -1,5 +1,6 @@
 package com.chiraggoswami.sduidemo.static
 
+import androidx.activity.compose.ReportDrawn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,29 +50,15 @@ fun StaticHomeScreen(modifier: Modifier = Modifier) {
     }
 
     Box(modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-            StaticHeader()
-            Box(Modifier.fillMaxWidth().background(Color(0xFF5B4FE9)).padding(horizontal = 8.dp, vertical = 4.dp)) {
-                StaticChipRow(topTabs, topTab, onSelect = { topTab = it })
-            }
-            if (topTab == "all" || topTab == "buy") StaticHeroSection()
-            if (topTab == "all" || topTab == "buy") StaticBuySection()
-            if (topTab == "all" || topTab == "sell") StaticSellSection()
-            if (topTab != "buy" && topTab != "sell") StaticLoanSection()
-            StaticChecksSection()
-            StaticLoveSection(
-                filter = carsFilter,
-                onFilterSelect = { carsFilter = it },
-                isWishlisted = { wishlist[it] ?: false },
-                onWishlistToggle = ::toggleWishlist,
-                onEmiClick = { emiSheetOpen = true },
-            )
-            StaticImageBanner("https://picsum.photos/seed/picsum/200/300")
-            StaticTrendingSection(isWishlisted = { wishlist[it] ?: false }, onWishlistToggle = ::toggleWishlist)
-            StaticImageBanner("https://placehold.net/2.png")
-            StaticImageBanner("https://placehold.net/map-400x400.png", bottomPadding = 24)
-            StaticFooter()
-        }
+        StaticScrollableRoot(
+            topTab = topTab,
+            onTopTabSelect = { topTab = it },
+            carsFilter = carsFilter,
+            onFilterSelect = { carsFilter = it },
+            isWishlisted = { wishlist[it] ?: false },
+            onWishlistToggle = ::toggleWishlist,
+            onEmiClick = { emiSheetOpen = true },
+        )
         SnackbarHost(snackbarHostState, Modifier.align(Alignment.BottomCenter))
     }
 
@@ -79,5 +66,49 @@ fun StaticHomeScreen(modifier: Modifier = Modifier) {
         ModalBottomSheet(onDismissRequest = { emiSheetOpen = false }) {
             StaticEmiSheet(emiTenure, onTenureSelect = { emiTenure = it }, onDismiss = { emiSheetOpen = false })
         }
+    }
+}
+
+/**
+ * Reports "fully drawn" via [ReportDrawn] — the same TTFD signal `SduiScreen.kt`'s
+ * `ScrollableRoot` reports via `ReportDrawnWhen`, so `StartupBenchmark`'s `timeToFullDisplayMs`
+ * is a fair comparison across both variants rather than measuring only one of them (see
+ * PERF.md). `ReportDrawn()`, not `ReportDrawnWhen { }`: this screen has no async loading state
+ * (no schema fetch/parse — see the class doc comment), so there's no readiness condition to
+ * wait for, just "report once this composes," which is exactly `ReportDrawn`'s job. `SduiScreen`
+ * needs the predicate variant instead because its first composition is a loading spinner, not
+ * real content (see that file's doc comment, and PERF.md's headline finding).
+ */
+@Composable
+private fun StaticScrollableRoot(
+    topTab: String,
+    onTopTabSelect: (String) -> Unit,
+    carsFilter: String,
+    onFilterSelect: (String) -> Unit,
+    isWishlisted: (String) -> Boolean,
+    onWishlistToggle: (String) -> Unit,
+    onEmiClick: () -> Unit,
+) {
+    ReportDrawn()
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+    ) {
+        StaticHeader()
+        Box(Modifier.fillMaxWidth().background(Color(0xFF5B4FE9)).padding(horizontal = 8.dp, vertical = 4.dp)) {
+            StaticChipRow(topTabs, topTab, onSelect = onTopTabSelect)
+        }
+        if (topTab == "all" || topTab == "buy") StaticHeroSection()
+        if (topTab == "all" || topTab == "buy") StaticBuySection()
+        if (topTab == "all" || topTab == "sell") StaticSellSection()
+        if (topTab != "buy" && topTab != "sell") StaticLoanSection()
+        StaticChecksSection()
+        StaticLoveSection(carsFilter, onFilterSelect, isWishlisted, onWishlistToggle, onEmiClick)
+        StaticImageBanner("https://picsum.photos/seed/picsum/200/300")
+        StaticTrendingSection(isWishlisted, onWishlistToggle)
+        StaticImageBanner("https://placehold.net/2.png")
+        StaticImageBanner("https://placehold.net/map-400x400.png", bottomPadding = 24)
+        StaticFooter()
     }
 }

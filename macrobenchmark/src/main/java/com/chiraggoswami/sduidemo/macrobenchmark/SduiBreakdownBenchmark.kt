@@ -42,7 +42,13 @@ class SduiBreakdownBenchmark {
             TraceSectionMetric(SECTION_JSON_PARSE, TraceSectionMetric.Mode.Sum),
             TraceSectionMetric(SECTION_VIEW_BUILD, TraceSectionMetric.Mode.Sum),
         ),
-        iterations = 10,
+        // 5, not Macrobenchmark's usual 10 — this device's cold-start iterations are slow
+        // (~1min+ each with COLD force-stop) and a couple of connectedBenchmarkAndroidTest runs
+        // have hit unrelated device-side flakiness (Perfetto failing to stop cleanly) on long
+        // runs; 5 iterations still gives a usable median without pushing single-run duration
+        // into territory where that flakiness shows up more. Bump back to 10 for a final,
+        // submission-grade number once numbers are otherwise settled.
+        iterations = 5,
         startupMode = StartupMode.COLD,
         compilationMode = CompilationMode.None(),
         setupBlock = { pressHome() },

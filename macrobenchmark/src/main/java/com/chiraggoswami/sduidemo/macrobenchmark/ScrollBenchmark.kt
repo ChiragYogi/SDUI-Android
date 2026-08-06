@@ -37,7 +37,9 @@ class ScrollBenchmark {
     fun scrollJank() = benchmarkRule.measureRepeated(
         packageName = TARGET_PACKAGE,
         metrics = listOf(FrameTimingMetric()),
-        iterations = 10,
+        // 5, not 10 — see SduiBreakdownBenchmark.kt for why. Bump back to 10 for a final,
+        // submission-grade number once numbers are otherwise settled.
+        iterations = 5,
         compilationMode = CompilationMode.None(),
         // No startupMode: this isn't a startup test — launch happens in setupBlock (not
         // measured) so cold-start cost never leaks into the FrameTimingMetric numbers below.

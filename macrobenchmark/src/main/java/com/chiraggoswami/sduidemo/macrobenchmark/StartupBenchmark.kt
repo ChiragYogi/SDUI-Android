@@ -33,7 +33,9 @@ class StartupBenchmark {
         // a Macrobenchmark/OEM trace-format incompatibility, not something fixable here.
         // Keeping it would abort the whole run with zero TTID data too, not just no frame data.
         metrics = listOf(StartupTimingMetric()),
-        iterations = 10,
+        // 5, not 10 — see SduiBreakdownBenchmark.kt for why. Bump back to 10 for a final,
+        // submission-grade number once numbers are otherwise settled.
+        iterations = 5,
         // COLD force-stops the target process before every iteration on its own —
         // no separate shell command or app-side hook needed for that.
         startupMode = StartupMode.COLD,
